@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func Get(url string, data interface{}) (string, error) {
+func Get(url, token string, data interface{}) (string, error) {
 	logs.Debug("请求参数：{}", data)
 	dataStr := utils.ToJSON(data)
 	obj := make(map[string]interface{})
@@ -19,9 +19,6 @@ func Get(url string, data interface{}) (string, error) {
 
 	paramStr := ""
 	for k, v := range obj {
-		if k == "token" || k == "tenantId" {
-			continue
-		}
 		if IsList(v) {
 			list := v.([]interface{})
 			for _, s := range list {
@@ -50,7 +47,7 @@ func Get(url string, data interface{}) (string, error) {
 	client := &http.Client{Transport: tr} //忽略https的请求
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Content-Type", "application/json;charset=UTF-8")
-	req.Header.Add("X-Auth-Token", fmt.Sprint(obj["token"]))
+	req.Header.Add("X-Auth-Token", token)
 	if err != nil {
 		logs.Error("http请求错误:{}", err.Error())
 		return "", err
@@ -72,12 +69,10 @@ func Get(url string, data interface{}) (string, error) {
 	return result, nil
 }
 
-func Post(url string, params interface{}) (string, error) {
+func Post(url, token string, params interface{}) (string, error) {
 	logs.Debug("请求参数：{}", params)
 	logs.Debug("请求url：{}", url)
 	dataStr := utils.ToJSON(params)
-	obj := make(map[string]interface{})
-	utils.FromJSON(dataStr, &obj)
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -86,7 +81,7 @@ func Post(url string, params interface{}) (string, error) {
 
 	req, err := http.NewRequest("POST", url, strings.NewReader(dataStr))
 	req.Header.Add("Content-Type", "application/json;charset=UTF-8")
-	req.Header.Add("X-Auth-Token", fmt.Sprint(obj["token"]))
+	req.Header.Add("X-Auth-Token", token)
 	if err != nil {
 		logs.Error("http请求错误:{}", err.Error())
 		return "", err
@@ -105,7 +100,7 @@ func Post(url string, params interface{}) (string, error) {
 	resStr := string(body)
 	logs.Debug("http请求返回的数据:{}", resStr)
 	if res.StatusCode == 202 {
-		return "", nil
+		return resStr, nil
 	}
 	if res.StatusCode != 200 {
 		return "", errors.New(resStr)
@@ -113,28 +108,23 @@ func Post(url string, params interface{}) (string, error) {
 	return resStr, nil
 }
 
-func VmActionPost(url string, params interface{}) (string, error) {
+func Delete(url, token string, params interface{}) (string, error) {
 	logs.Debug("请求参数：{}", params)
 	logs.Debug("请求url：{}", url)
 	dataStr := utils.ToJSON(params)
-	obj := make(map[string]interface{})
-	utils.FromJSON(dataStr, &obj)
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr} //忽略https的请求
-	token := fmt.Sprint(obj["token"])
-	delete(obj, "token")
-	delete(obj, "tenantId")
-	delete(obj, "server_id")
-	req, err := http.NewRequest("POST", url, strings.NewReader(utils.ToJSON(obj)))
-	req.Header.Add("Content-Type", "application/json;charset=UTF-8")
-	req.Header.Add("X-Auth-Token", token)
+
+	req, err := http.NewRequest("DELETE", url, strings.NewReader(dataStr))
 	if err != nil {
 		logs.Error("http请求错误:{}", err.Error())
 		return "", err
 	}
+	req.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	req.Header.Add("X-Auth-Token", token)
 	res, err := client.Do(req)
 	if err != nil {
 		logs.Error("http请求错误:{}", err.Error())

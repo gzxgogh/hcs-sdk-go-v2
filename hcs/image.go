@@ -10,8 +10,8 @@ import (
 )
 
 func QueryImage(params model.QueryImageRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://ecs.cn-global-1.hyy.com:5443/v2.1/%s/images`, params.TenantId)
-	dataStr, err := request.Get(url, params)
+	url := fmt.Sprintf(`https://%s/v2.1/%s/images`, params.Domain, params.TenantId)
+	dataStr, err := request.Get(url, params.Token, params)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -24,7 +24,7 @@ func QueryImage(params model.QueryImageRequest) models.Result[any] {
 	for _, item := range images {
 		//name := fmt.Sprint(item["name"])
 		newUrl := url + "/" + fmt.Sprint(item["id"])
-		dataStr, err := request.Get(newUrl, params)
+		dataStr, err := request.Get(newUrl, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}

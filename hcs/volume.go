@@ -9,8 +9,22 @@ import (
 )
 
 func CreateVolume(params model.CreateVolumeRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://evs.cn-global-1.hyy.com:5443/v2/%s/volumes`, params.TenantId)
-	dataStr, err := request.Post(url, params)
+	url := fmt.Sprintf(`https://%s/v2/%s/volumes`, params.Domain, params.TenantId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var result model.CreateVolumeResponse
+	utils.FromJSON(utils.ToJSON(res["volume"]), &result)
+
+	return models.Success[any](result)
+}
+
+func QueryVolume(params model.CreateVolumeRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2/%s/volumes`, params.Domain, params.TenantId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

@@ -1,6 +1,7 @@
 package model
 
 type QuerySpecRequest struct {
+	Domain   string `json:"domain"`
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
 	Id       string `json:"id,omitempty"`
@@ -17,4 +18,17 @@ type QuerySpecResponse struct {
 	OSFLVDISABLEDDisabled  bool    `json:"OS-FLV-DISABLED:disabled"`
 	RxtxFactor             float64 `json:"rxtx_factor"`
 	OsFlavorAccessIsPublic bool    `json:"os-flavor-access:is_public"`
+}
+
+type DeleteSpecRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	Id       string `json:"id"`
+}
+
+type CreateSpecRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
 }

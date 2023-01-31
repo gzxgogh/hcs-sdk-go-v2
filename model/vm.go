@@ -3,16 +3,22 @@ package model
 import "time"
 
 type CreateVmRequest struct {
-	Token    string `json:"token"`
-	TenantId string `json:"tenantId"`
-	Server   Server `json:"server"`
+	Domain   string         `json:"domain"`
+	Token    string         `json:"token"`
+	TenantId string         `json:"tenantId"`
+	Params   CreateVmParams `json:"params"`
+}
+
+type CreateVmParams struct {
+	Server Server `json:"server"`
 }
 
 type Server struct {
-	FlavorRef          string             ` json:"flavorRef"`              //规格id
-	Name               string             `json:"name"`                    //名称
-	Networks           []NetWork          `json:"networks"`                //网络的uuid
-	BlockDeviceMapping BlockDeviceMapping `json:"block_device_mapping_v2"` //系统卷信息
+	FlavorRef          string               ` json:"flavorRef"`              //规格id
+	Name               string               `json:"name"`                    //名称
+	Networks           []NetWork            `json:"networks"`                //网络的uuid
+	BlockDeviceMapping []BlockDeviceMapping `json:"block_device_mapping_v2"` //系统卷信息
+	AvailabilityZone   string               `json:"availability_zone"`       //可用区域
 }
 
 type NetWork struct {
@@ -33,6 +39,7 @@ type CreateVmResponse struct {
 }
 
 type QueryVmRequest struct {
+	Domain   string `json:"domain"`
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
 	ServerId string `json:"server_id,omitempty"`
@@ -95,26 +102,203 @@ type VmSecurityGroups []struct {
 }
 
 type StartVmRequest struct {
-	Token    string                 `json:"token"`
-	TenantId string                 `json:"tenantId"`
-	ServerId string                 `json:"server_id"`
-	Start    map[string]interface{} `json:"os-start"`
-}
-
-type StopVmRequest struct {
-	Token    string                 `json:"token"`
-	TenantId string                 `json:"tenantId"`
-	ServerId string                 `json:"server_id"`
-	Stop     map[string]interface{} `json:"os-stop"`
-}
-
-type RebootVmRequest struct {
+	Domain   string `json:"domain"`
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
 	ServerId string `json:"server_id"`
-	Reboot   Reboot `json:"reboot"`
+	Action   Start  `json:"action"`
+}
+
+type Start struct {
+	Start map[string]interface{} `json:"os-start"`
+}
+
+type StopVmRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	ServerId string `json:"server_id"`
+	Action   Stop   `json:"action"`
+}
+
+type Stop struct {
+	Stop map[string]interface{} `json:"os-stop"`
+}
+
+type RebootVmRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	ServerId string `json:"server_id"`
+	Action   Reboot `json:"action"`
 }
 
 type Reboot struct {
+	Type RebootType `json:"reboot"`
+}
+
+type RebootType struct {
 	Type string `json:"type"` //普通重启（“SOFT”）和强制重启（“HARD”）
+}
+
+type VmRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	ServerId string `json:"server_id"`
+}
+
+type QueryVmNicResponse []struct {
+	NetId     string   `json:"net_id"`
+	PortId    string   `json:"port_id"`
+	MacAddr   string   `json:"mac_addr"`
+	PortState string   `json:"port_state"`
+	FixedIps  FixedIps `json:"fixed_ips"`
+}
+
+type FixedIps []struct {
+	SubnetId  string `json:"subnet_id"`
+	IpAddress string `json:"ip_address"`
+}
+
+type AttachNicRequest struct {
+	Domain   string          `json:"domain"`
+	Token    string          `json:"token"`
+	TenantId string          `json:"tenantId"`
+	ServerId string          `json:"server_id"`
+	Params   AttachNicParams `json:"params"`
+}
+
+type AttachNicParams struct {
+	InterfaceAttachment InterfaceAttachment `json:"interfaceAttachment"`
+}
+
+type InterfaceAttachment struct {
+	NetId string `json:"net_id"`
+}
+
+type DetachNicRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	ServerId string `json:"server_id"`
+	NicId    string `json:"nic_id"`
+}
+
+type AttachVolumeRequest struct {
+	Domain   string             `json:"domain"`
+	Token    string             `json:"token"`
+	TenantId string             `json:"tenantId"`
+	ServerId string             `json:"server_id"`
+	Params   AttachVolumeParams `json:"params"`
+}
+
+type AttachVolumeParams struct {
+	VolumeAttachment VolumeAttachment `json:"volumeAttachment"`
+}
+
+type VolumeAttachment struct {
+	VolumeId string `json:"volumeId"`
+	Device   string `json:"device"`
+}
+
+type AttachVolumeResponse struct {
+	VolumeId string `json:"volumeId"`
+	Id       string `json:"id"`
+	Device   string `json:"device"`
+	ServerId string `json:"serverId"`
+}
+
+type DetachVolumeRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	ServerId string `json:"server_id"`
+	VolumeId string `json:"volume_id"`
+}
+
+type UpgradeVmRequest struct {
+	Domain   string          `json:"domain"`
+	Token    string          `json:"token"`
+	TenantId string          `json:"tenantId"`
+	ServerId string          `json:"server_id"`
+	Params   UpgradeVmParams `json:"params"`
+}
+
+type UpgradeVmParams struct {
+	Resize Resize `json:"resize"`
+}
+
+type Resize struct {
+	FlavorRef       string `json:"flavorRef"`
+	DedicatedHostId string `json:"dedicated_host_id,omitempty"`
+}
+
+type OnlineUpgradeVmRequest struct {
+	Domain   string                `json:"domain"`
+	Token    string                `json:"token"`
+	TenantId string                `json:"tenantId"`
+	ServerId string                `json:"server_id"`
+	Params   OnlineUpgradeVmParams `json:"params"`
+}
+
+type OnlineUpgradeVmParams struct {
+	Resize Resize `json:"live-resize"`
+}
+
+type CloneVmRequest struct {
+	Domain   string        `json:"domain"`
+	Token    string        `json:"token"`
+	TenantId string        `json:"tenantId"`
+	ServerId string        `json:"server_id"`
+	Params   CloneVmParams `json:"params"`
+}
+
+type CloneVmParams struct {
+	CloneVm CloneVm `json:"os-clone"`
+}
+
+type CloneVm struct {
+	Name      string   `json:"name,omitempty"`
+	CloneNum  int      `json:"clone_num,omitempty"`
+	CloneType string   `json:"clone_type,omitempty"`
+	KeyName   string   `json:"key_name,omitempty"`
+	UserData  string   `json:"user_data,omitempty"`
+	Metadata  string   `json:"metadata,omitempty"`
+	PowerOn   bool     `json:"power_on,omitempty"`
+	Postfix   string   `json:"postfix,omitempty"`
+	VpcId     string   `json:"vpc_id,omitempty"`
+	Nics      NicClone `json:"nics,omitempty"`
+}
+
+type NicClone struct {
+	SubNetId       string        `json:"subnet_id,omitempty"`
+	SecurityGroups SecGroupClone `json:"security_groups,omitempty"`
+}
+
+type SecGroupClone struct {
+	Id string `json:"id,omitempty"`
+}
+
+type QueryConsoleAddRequest struct {
+	Domain   string                `json:"domain"`
+	Token    string                `json:"token"`
+	TenantId string                `json:"tenantId"`
+	ServerId string                `json:"server_id"`
+	Params   QueryConsoleAddParams `json:"params"`
+}
+
+type QueryConsoleAddParams struct {
+	ConsoleAdd ConsoleAdd `json:"remote_console"`
+}
+
+type ConsoleAdd struct {
+	Type     string `json:"type"`
+	Protocol string `json:"protocol"`
+}
+
+type QueryConsoleAddResponse struct {
+	Url      string `json:"url"`
+	Type     string `json:"type"`
+	Protocol string `json:"protocol"`
 }
