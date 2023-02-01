@@ -47,7 +47,11 @@ func QuerySpec(params model.QuerySpecRequest) models.Result[any] {
 		}
 		res := make(map[string]interface{})
 		utils.FromJSON(dataStr, &res)
-
+		if res["itemNotFound"] != nil {
+			var errObj model.ItemNotFound
+			utils.FromJSON(utils.ToJSON(res["itemNotFound"]), &errObj)
+			return models.Error(-1, errObj.Message)
+		}
 		var result model.QuerySpecResponse
 		utils.FromJSON(utils.ToJSON(res["flavor"]), &result)
 		return models.Success[any](result)

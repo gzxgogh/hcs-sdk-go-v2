@@ -2,7 +2,6 @@ package hcs
 
 import (
 	"fmt"
-	"github.com/maczh/mgin/logs"
 	"github.com/maczh/mgin/models"
 	"github.com/maczh/mgin/utils"
 	"hcs-sdk-go-v2/model"
@@ -11,6 +10,25 @@ import (
 )
 
 func CreateVm(params model.CreateVmRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v1.1/%s/cloudservers`, params.Domain, params.TenantId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	var res model.JobResponse
+	utils.FromJSON(dataStr, &res)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	return models.Success[any](nil)
+}
+
+func CreateVmFromVolume(params model.CreateVmFromVolumeRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v2/%s/servers`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
@@ -18,39 +36,55 @@ func CreateVm(params model.CreateVmRequest) models.Result[any] {
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var servers model.CreateVmResponse
+	var servers model.CreateVmFromVolumeResponse
 	utils.FromJSON(utils.ToJSON(res["servers"]), &servers)
 
 	return models.Success[any](servers)
 }
 
+func DeleteVm(params model.DeleteVmRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v1/%s/cloudservers/delete`, params.Domain, params.TenantId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	var res model.JobResponse
+	utils.FromJSON(dataStr, &res)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	return models.Success[any](nil)
+}
+
+func UpdateVm(params model.UpdateVmRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.1/%s/servers/%s`, params.Domain, params.TenantId, params.ServerId)
+	_, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	return QueryVm(model.QueryVmRequest{
+		Domain:   params.Domain,
+		TenantId: params.TenantId,
+		Token:    params.Token,
+		ServerId: params.ServerId,
+	})
+}
+
 func QueryVm(params model.QueryVmRequest) models.Result[any] {
 	if params.ServerId == "" {
-		url := fmt.Sprintf(`https://%s/v2/%s/servers`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`https://%s/v2/%s/servers/detail`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
 		res := make(map[string]interface{})
 		utils.FromJSON(dataStr, &res)
-		var flavors []map[string]interface{}
-		utils.FromJSON(utils.ToJSON(res["servers"]), &flavors)
-
 		var finalList []model.QueryVmResponse
-		for _, item := range flavors {
-			newUrl := url + "/" + fmt.Sprint(item["id"])
-			dataStr, err := request.Get(newUrl, params.Token, params)
-			if err != nil {
-				return models.Error(-1, err.Error())
-			}
-			res := make(map[string]interface{})
-			utils.FromJSON(dataStr, &res)
-
-			var result model.QueryVmResponse
-			utils.FromJSON(utils.ToJSON(res["server"]), &result)
-			finalList = append(finalList, result)
-		}
-		logs.Debug("最终的结果:{}", finalList)
+		utils.FromJSON(utils.ToJSON(res["servers"]), &finalList)
 
 		return models.Success[any](finalList)
 	} else {
@@ -61,6 +95,11 @@ func QueryVm(params model.QueryVmRequest) models.Result[any] {
 		}
 		res := make(map[string]interface{})
 		utils.FromJSON(dataStr, &res)
+		if res["itemNotFound"] != nil {
+			var errObj model.ItemNotFound
+			utils.FromJSON(utils.ToJSON(res["itemNotFound"]), &errObj)
+			return models.Error(-1, errObj.Message)
+		}
 		var vmInstance model.QueryVmResponse
 		utils.FromJSON(utils.ToJSON(res["server"]), &vmInstance)
 
@@ -70,7 +109,7 @@ func QueryVm(params model.QueryVmRequest) models.Result[any] {
 
 func StartVm(params model.StartVmRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v2/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
-	_, err := request.Post(url, params.Token, params.Action)
+	_, err := request.Post(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -102,7 +141,7 @@ func StopVm(params model.StopVmRequest) models.Result[any] {
 
 	for i := 0; i < 60; i++ {
 		url = fmt.Sprintf(`https://%s/v2/%s/servers/%s`, params.Domain, params.TenantId, params.ServerId)
-		dataStr, err := request.Get(url, params.Token, params)
+		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
@@ -128,7 +167,7 @@ func RebootVm(params model.RebootVmRequest) models.Result[any] {
 
 	for i := 0; i < 60; i++ {
 		url = fmt.Sprintf(`https://%s/v2/%s/servers/%s`, params.Domain, params.TenantId, params.ServerId)
-		dataStr, err := request.Get(url, params.Token, params)
+		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
@@ -152,6 +191,11 @@ func QueryVmNic(params model.VmRequest) models.Result[any] {
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
+	if res["itemNotFound"] != nil {
+		var errObj model.ItemNotFound
+		utils.FromJSON(utils.ToJSON(res["itemNotFound"]), &errObj)
+		return models.Error(-1, errObj.Message)
+	}
 	var list model.QueryVmNicResponse
 	utils.FromJSON(utils.ToJSON(res["interfaceAttachments"]), &list)
 
@@ -170,6 +214,25 @@ func AttachVmNic(params model.AttachNicRequest) models.Result[any] {
 	utils.FromJSON(utils.ToJSON(res["interfaceAttachments"]), &list)
 
 	return models.Success[any](list)
+}
+
+func BatchAttachVmNic(params model.BatchAttachNicRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v1/%s/cloudservers/%s/nics`, params.Domain, params.TenantId, params.ServerId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	var res model.JobResponse
+	utils.FromJSON(dataStr, &res)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
 }
 
 func DetachVmNic(params model.DetachNicRequest) models.Result[any] {
@@ -214,19 +277,31 @@ func UpgradeVm(params model.UpgradeVmRequest) models.Result[any] {
 	}
 	var res model.JobResponse
 	utils.FromJSON(dataStr, &res)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
 
-	for i := 0; i < 60; i++ {
-		url = fmt.Sprintf(`https://%s/v1/%s/jobs/%s`, params.Domain, params.TenantId, res.JobId)
-		dataStr, err = request.Get(url, params.Token, nil)
-		if err != nil {
-			return models.Error(-1, err.Error())
-		}
-		var jobRes model.JobInfo
-		utils.FromJSON(dataStr, &jobRes)
-		if jobRes.Status == "SUCCESS" {
-			break
-		}
-		time.Sleep(1 * time.Second)
+	return models.Success[any](nil)
+}
+
+func ChangeVmImage(params model.ChangeVmImageRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2/%s/cloudservers/%s/changeos`, params.Domain, params.TenantId, params.ServerId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	var res model.JobResponse
+	utils.FromJSON(dataStr, &res)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
 	}
 
 	return models.Success[any](nil)
@@ -242,18 +317,9 @@ func OnlineUpgradeVm(params model.OnlineUpgradeVmRequest) models.Result[any] {
 	//var res model.JobResponse
 	//utils.FromJSON(dataStr, &res)
 	//
-	//for {
-	//	url = fmt.Sprintf(`https://%s/v1/%s/jobs/%s`, params.Domain, params.TenantId, res.JobId)
-	//	dataStr, err = request.Get(url, params.Token, nil)
-	//	if err != nil {
-	//		return models.Error(-1, err.Error())
-	//	}
-	//	var jobRes model.JobInfo
-	//	utils.FromJSON(dataStr, &jobRes)
-	//	if jobRes.Status == "SUCCESS" {
-	//		break
-	//	}
-	//	time.Sleep(1 * time.Second)
+	//err =ExecJob(params.Domain,params.TenantId,params.Token,res.JobId)
+	//if err != nil {
+	//	return models.Error(-1, err.Error())
 	//}
 
 	return models.Success[any](nil)
@@ -268,19 +334,12 @@ func CloneVm(params model.CloneVmRequest) models.Result[any] {
 	}
 	var res model.JobResponse
 	utils.FromJSON(dataStr, &res)
-
-	for i := 0; i < 60; i++ {
-		url = fmt.Sprintf(`https://%s/v1/%s/jobs/%s`, params.Domain, params.TenantId, res.JobId)
-		dataStr, err = request.Get(url, params.Token, nil)
-		if err != nil {
-			return models.Error(-1, err.Error())
-		}
-		var jobRes model.JobInfo
-		utils.FromJSON(dataStr, &jobRes)
-		if jobRes.Status == "SUCCESS" {
-			break
-		}
-		time.Sleep(1 * time.Second)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
 	}
 
 	return models.Success[any](nil)
@@ -308,9 +367,70 @@ func QueryConsoleAddress(params model.QueryConsoleAddRequest) models.Result[any]
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-
+	if res["itemNotFound"] != nil {
+		var errObj model.ItemNotFound
+		utils.FromJSON(utils.ToJSON(res["itemNotFound"]), &errObj)
+		return models.Error(-1, errObj.Message)
+	}
 	var result model.QueryConsoleAddResponse
 	utils.FromJSON(utils.ToJSON(res["remote_console"]), &result)
 
 	return models.Success[any](result)
+}
+
+func CreateVmSnapshot(params model.CreateVmSnapshotRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.1/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	var res model.JobResponse
+	utils.FromJSON(dataStr, &res)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
+// 使用此API，需预先安装重置密码插件
+func ChangeVmPwd(params model.ChangeVmPwdRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v1/%s/cloudservers/%s/os-reset-password`, params.Domain, params.TenantId, params.ServerId)
+	_, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	return models.Success[any](nil)
+}
+
+func CheckCanChangePwd(params model.VmRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v1/%s/cloudservers/%s/os-resetpwd-flag`, params.Domain, params.TenantId, params.ServerId)
+	dataStr, err := request.Get(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	return models.Success[any](res)
+}
+
+func ExecJob(domain, tenantId, token, jobId string) error {
+	for i := 0; i < 60; i++ {
+		url := fmt.Sprintf(`https://%s/v1/%s/jobs/%s`, domain, tenantId, jobId)
+		dataStr, err := request.Get(url, token, nil)
+		if err != nil {
+			return err
+		}
+		var jobRes model.JobInfo
+		utils.FromJSON(dataStr, &jobRes)
+		if jobRes.Status == "SUCCESS" {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+	return nil
 }

@@ -10,32 +10,50 @@ import (
 )
 
 func QueryImage(params model.QueryImageRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.1/%s/images`, params.Domain, params.TenantId)
-	dataStr, err := request.Get(url, params.Token, params)
-	if err != nil {
-		return models.Error(-1, err.Error())
-	}
-	res := make(map[string]interface{})
-	utils.FromJSON(dataStr, &res)
-	var images []map[string]interface{}
-	utils.FromJSON(utils.ToJSON(res["images"]), &images)
-
-	var finalList []model.QueryImageResponse
-	for _, item := range images {
-		//name := fmt.Sprint(item["name"])
-		newUrl := url + "/" + fmt.Sprint(item["id"])
-		dataStr, err := request.Get(newUrl, params.Token, params)
+	if params.Id == "" {
+		url := fmt.Sprintf(`https://%s/v2.1/%s/images`, params.Domain, params.TenantId)
+		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
 		res := make(map[string]interface{})
 		utils.FromJSON(dataStr, &res)
+		var images []map[string]interface{}
+		utils.FromJSON(utils.ToJSON(res["images"]), &images)
 
+		var finalList []model.QueryImageResponse
+		for _, item := range images {
+			//name := fmt.Sprint(item["name"])
+			newUrl := url + "/" + fmt.Sprint(item["id"])
+			dataStr, err := request.Get(newUrl, params.Token, params)
+			if err != nil {
+				return models.Error(-1, err.Error())
+			}
+			res := make(map[string]interface{})
+			utils.FromJSON(dataStr, &res)
+
+			var result model.QueryImageResponse
+			utils.FromJSON(utils.ToJSON(res["image"]), &result)
+			finalList = append(finalList, result)
+		}
+		logs.Debug("最终的结果:{}", finalList)
+
+		return models.Success[any](finalList)
+	} else {
+		url := fmt.Sprintf(`https://%s/v2.1/%s/images/%s`, params.Domain, params.TenantId, params.Id)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		if res["itemNotFound"] != nil {
+			var errObj model.ItemNotFound
+			utils.FromJSON(utils.ToJSON(res["itemNotFound"]), &errObj)
+			return models.Error(-1, errObj.Message)
+		}
 		var result model.QueryImageResponse
 		utils.FromJSON(utils.ToJSON(res["image"]), &result)
-		finalList = append(finalList, result)
+		return models.Success[any](result)
 	}
-	logs.Debug("最终的结果:{}", finalList)
-
-	return models.Success[any](finalList)
 }

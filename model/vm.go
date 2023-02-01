@@ -10,10 +10,106 @@ type CreateVmRequest struct {
 }
 
 type CreateVmParams struct {
-	Server Server `json:"server"`
+	Server CreateVm `json:"server"`
 }
 
-type Server struct {
+type CreateVm struct {
+	ImageRef         string           `json:"imageRef"`   //镜像id
+	FlavorRef        string           ` json:"flavorRef"` //规格id
+	Description      string           `json:"description,omitempty"`
+	Name             string           `json:"name"` //名称
+	Personality      []Personality    `json:"personality,omitempty"`
+	UserData         string           `json:"user_data,omitempty"`
+	AdminPass        string           `json:"adminPass,omitempty"` //虚拟机密码，当前使用cloud-init的方式实现密码注入，该参数无效
+	KeyName          string           `json:"key_name,omitempty"`  //如果需要使用SSH密钥方式登录 云服务器，请指定已创建密钥的 名称。约束：当key_name与 user_data同时指定时，user_data只做用户数据注入。
+	VpcId            string           `json:"vpcid"`               //待创建云服务器所属虚拟私有云（简称VPC），需要指定已创建VPC的ID，UUID格式。
+	Nics             []Nic            `json:"nics"`
+	PublicIp         PublicIp         `json:"publicip,omitempty"`           //配置云服务器的弹性IP信息， TYPE3场景不支持，弹性IP有三 种配置方式。 不使用（无该字 段）。 自动分配，需要指定新 创建弹性IP的信息。 使用已 有，需要指定已创建弹性IP的信 息。
+	Count            int              `json:"count,omitempty"`              //创建数量最大1000
+	IsAutoRename     bool             `json:"isAutoRename,omitempty"`       //是否允许重名
+	RootVolume       RootVolume       `json:"root_volume"`                  //系统盘信息
+	DataVolumes      []DataVolume     `json:"data_volumes,omitempty"`       //数据盘信息
+	SecurityGroups   []SecurityGroups `json:"security_groups,omitempty"`    //安全组信息
+	AvailabilityZone string           `json:"availability_zone"`            //可用区域
+	Extendparam      Extendparam      `json:"extendparam,omitempty"`        //创建云服务器附加信息
+	Metadata         Metadata         `json:"metadata,omitempty"`           //创建云服务器元数据。 创建密 码方式鉴权的Windows弹性云 服务器时，为必填字段。 说明 该字段暂不支持用户写入数据， 但是当使用Windows镜像创建 弹性云服务器时，该字段为必选 字段。
+	OsSchedulerHints OsSchedulerHints `json:"os:scheduler_hints,omitempty"` //云服务器调度信息。
+	Tags             []string         `json:"tags,omitempty"`               //标签的格式为“key.value”。 其中，key的长度不超过36个字符，value的长度不超过43个字符。
+	PowerOn          bool             `json:"power_on"`                     //创建完后云主机的状态，true:开机,false:关机
+	Extra            Extra            `json:"extra,omitempty"`
+}
+
+type Personality struct {
+	Contents string `json:"contents"` //注入文件的内容。 该值应指定 为注入文件的内容进行base64 格式编码后的信息。
+	Path     string `json:"path"`     //注入文件路径信息。 .Linux系统 请输入注入文件保存路径，例如 “/etc/foo.txt”。
+}
+type Nic struct {
+	IpAddress       string                   `json:"ip_address,omitempty"`       //待创建云服务器网卡的IP地址， IPv4格式。
+	SubnetId        string                   `json:"subnet_id"`                  //待创建云服务器的网卡信息。需 要指定vpcid对应VPC下已创建 的网络（network）的ID，UUID格式。
+	NicType         string                   `json:"nictype,omitempty"`          //网卡类型名称。
+	IpAddressV6     string                   `json:"ip_address_v6,omitempty"`    //待创建云服务器网卡的IP地址， IPv6格式。
+	PhysicalNetwork string                   `json:"physical_network,omitempty"` //物理网络
+	BindingProfile  map[string]string        `json:"binding:profile,omitempty"`  //提供用户设置自定义信息。异构 计算时，属性external_vlan为接 入外部网络的vlan，当采用 access方式时设置为0。格式、 用法参考网络接口中创建端口_ 社区兼容接口中binding:profile 用法。
+	ExtraDhcpOpts   []map[string]interface{} `json:"extra_dhcp_opts,omitempty"`  //DHCP的扩展Option，格式、用法参考网络接口中创建端口_社区兼容接口中extra_dhcp_opts对象说明。
+}
+type PublicIp struct {
+	Eip Eip    `json:"eip,omitempty"` //配置云服务器自动分配弹性IP 时，创建弹性IP的配置参数。
+	Id  string `json:"id,omitempty"`  //为待创建云服务器分配已有弹性IP时，分配的弹性IP的ID，UUID格式。约束：只能分配状态（status）为DOWN的弹性 IP。
+}
+type Eip struct {
+	Bandwidth Bandwidth `json:"bandwidth"` //弹性IP地址带宽参数。
+	IpType    string    `json:"iptype"`    //弹性IP外部网络名称。
+}
+type Bandwidth struct {
+	Chargemode string `json:"chargemode,omitempty"` //带宽的计费类型。未传该字段，表示按带宽计费。字段值为空，表示按带宽计费。字段值为 “traffic”，表示按流量计费。字段为其它值，会导致创建云服务器失败。说明：如果share_type是WHOLE并且id有值，该参数会忽略。
+	Id         string `json:"id,omitempty"`         //带宽ID，创建WHOLE类型带宽的弹性IP时可以指定之前的共享带宽创建。取值范围：WHOLE类型的带宽ID。说明当创建WHOLE类型的带宽时，该字段必选。
+	ShareType  string `json:"sharetype"`            //带宽的共享类型。共享类型枚举：PER，表示独享。WHOLE，表示共享。
+	Size       int    `json:"size,omitempty"`       //带宽（Mbit/s），取值范围为[1,300]。如果 share_type是PER，该参数必选 项；如果share_type是WHOLE并且id有值,该参数会忽略
+}
+type RootVolume struct {
+	Size       int    `json:"size,omitempty"` //系统盘大小，容量单位为GB。 约束： 1.系统盘大小取值应不 小于镜像支持的系统盘的最小值 (镜像的min_disk属性)。 2.若该 参数没有指定或者指定为0，系 统盘大小默认取值为镜像中系统 盘的最小值(镜像的min_disk属 性)。
+	VolumeType string `json:"volumetype"`     //磁盘类型
+}
+type DataVolume struct {
+	Passthrough bool   `json:"hw:passthrough,omitempty"` //数据卷是否使用SCSI锁。如果使 用，请将该字段值配置为 “true”，否则，请勿填写该字段。
+	Multiattach bool   `json:"multiattach,omitempty"`    //是否指定为共享磁盘
+	Size        int    `json:"size"`                     //数据盘大小，容量单位为GB，输入大小范围为[1,65536]。
+	VolumeType  string `json:"volumetype"`               //磁盘类型
+	VolumeId    string `json:"volume_id,omitempty"`      //1.数据盘 ID参数不为空，创建虚拟机时，不再创建空白的数据盘，使用已有的数据盘；2.数据盘ID参数为空，创建虚拟机时，默认创建空白的数据盘
+}
+type SecurityGroups struct {
+	Id string `json:"id"` //待创建云服务器的安全组，会对 创建云服务器中配置的网卡生效。需要指定已有安全组的ID，UUID格式。
+}
+type Extendparam struct {
+	Postfix string `json:"postfix,omitempty"` //虚拟机名称的后缀，默认为空。 取值范围[0001-9999]，限制：1、该值与参数count值之和不能大于9999；2、该值长度与虚拟机名称长度之和不能超过参数name的最大长度限制。
+}
+type Metadata struct {
+	AdminPass        string `json:"admin_pass,omitempty"` //以Windows镜像创建的弹性云服务器Administrator用户的密码。密码复杂度要求：1.长度为8-26位。
+	HwWatchdogAction string `json:"hw_watchdog_action,omitempty"`
+	HaPolicyType     string `json:"_ha_policy_type,omitempty"`
+}
+type OsSchedulerHints struct {
+	Group string `json:"group,omitempty"` //云服务器组ID，UUID格式。
+}
+type Extra struct {
+	Device Device `json:"device"`
+}
+type Device struct {
+	Cdrom string `json:"cdrom,omitempty"`
+}
+
+type CreateVmFromVolumeRequest struct {
+	Domain   string                   `json:"domain"`
+	Token    string                   `json:"token"`
+	TenantId string                   `json:"tenantId"`
+	Params   CreateVmFromVolumeParams `json:"params"`
+}
+
+type CreateVmFromVolumeParams struct {
+	Server CreateVmFromVolume `json:"server"`
+}
+
+type CreateVmFromVolume struct {
 	FlavorRef          string               ` json:"flavorRef"`              //规格id
 	Name               string               `json:"name"`                    //名称
 	Networks           []NetWork            `json:"networks"`                //网络的uuid
@@ -33,9 +129,43 @@ type BlockDeviceMapping struct {
 	BootIndex           int    `json:"boot_index"`            //boot_index是指启动标识，“0”代表启动盘，“-1“代表非启动盘。
 }
 
-type CreateVmResponse struct {
+type CreateVmFromVolumeResponse struct {
 	Id        string `json:"id"`
 	AdminPass string `json:"adminPass"`
+}
+
+type DeleteVmRequest struct {
+	Domain   string         `json:"domain"`
+	Token    string         `json:"token"`
+	TenantId string         `json:"tenantId"`
+	Params   DeleteVmParams `json:"params"`
+}
+
+type DeleteVmParams struct {
+	DeleteVm       []DeleteVm `json:"servers"`
+	DeletePublicIp bool       `json:"delete_publicip"`
+	DeleteVolume   bool       `json:"delete_volume"`
+}
+
+type DeleteVm struct {
+	Id string `json:"id"`
+}
+
+type UpdateVmRequest struct {
+	Domain   string         `json:"domain"`
+	Token    string         `json:"token"`
+	TenantId string         `json:"tenantId"`
+	ServerId string         `json:"server_id"`
+	Params   UpdateVmParams `json:"params"`
+}
+
+type UpdateVmParams struct {
+	UpdateVm UpdateVm `json:"server"`
+}
+
+type UpdateVm struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type QueryVmRequest struct {
@@ -56,7 +186,7 @@ type QueryVmResponse struct {
 	Id                               string                           `json:"id"`
 	OsExtendedVolumesVolumesAttached OsExtendedVolumesVolumesAttached `json:"os-extended-volumes:volumes_attached"`
 	OSEXTSRVATTRHost                 string                           `json:"OS-EXT-SRV-ATTR:host"`
-	Image                            VmImage                          `json:"image"`
+	Image                            VmImage                          `json:"image,omitempty"`
 	OSSRVUSGTerminatedAt             interface{}                      `json:"OS-SRV-USG:terminated_at"`
 	AccessIPv4                       string                           `json:"accessIPv4"`
 	AccessIPv6                       string                           `json:"accessIPv6"`
@@ -75,6 +205,11 @@ type QueryVmResponse struct {
 	OSSRVUSGLaunchedAt               string                           `json:"OS-SRV-USG:launched_at"`
 	Updated                          time.Time                        `json:"updated"`
 	Status                           string                           `json:"status"`
+}
+
+type ItemNotFound struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 type VmMetadata struct {
@@ -177,6 +312,27 @@ type InterfaceAttachment struct {
 	NetId string `json:"net_id"`
 }
 
+type BatchAttachNicRequest struct {
+	Domain   string               `json:"domain"`
+	Token    string               `json:"token"`
+	TenantId string               `json:"tenantId"`
+	ServerId string               `json:"server_id"`
+	Params   BatchAttachNicParams `json:"params"`
+}
+
+type BatchAttachNicParams struct {
+	Nics []BatchNic `json:"nics"`
+}
+
+type BatchNic struct {
+	SubnetId         string           `json:"subnet_id"`                   //待创建云服务器的网卡信息。需 要指定vpcid对应VPC下已创建 的网络（network）的ID，UUID格式。
+	IpAddress        string           `json:"ip_address,omitempty"`        //待创建云服务器网卡的IP地址， IPv4格式。
+	IpAddressV6      string           `json:"ip_address_v6,omitempty"`     //待创建云服务器网卡的IP地址， IPv6格式。
+	PhysicalNetwork  string           `json:"physical_network,omitempty"`  //物理网络
+	AvailabilityZone string           `json:"availability_zone,omitempty"` //可用区域
+	SecurityGroups   []SecurityGroups `json:"security_groups"`
+}
+
 type DetachNicRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`
@@ -234,6 +390,26 @@ type Resize struct {
 	DedicatedHostId string `json:"dedicated_host_id,omitempty"`
 }
 
+type ChangeVmImageRequest struct {
+	Domain   string              `json:"domain"`
+	Token    string              `json:"token"`
+	TenantId string              `json:"tenantId"`
+	ServerId string              `json:"server_id"`
+	Params   ChangeVmImageParams `json:"params"`
+}
+
+type ChangeVmImageParams struct {
+	ChangeVmImage ChangeVmImage `json:"os-change"`
+}
+
+type ChangeVmImage struct {
+	AdminPass string            `json:"adminPass,omitempty"` //虚拟机密码，当前使用cloud-init的方式实现密码注入，该参数无效
+	KeyName   string            `json:"key_name,omitempty"`
+	UserId    string            `json:"user_id,omitempty"`
+	ImageId   string            `json:"imageid"`
+	Metadata  map[string]string `json:"metadata,omitempty"`
+}
+
 type OnlineUpgradeVmRequest struct {
 	Domain   string                `json:"domain"`
 	Token    string                `json:"token"`
@@ -272,12 +448,8 @@ type CloneVm struct {
 }
 
 type NicClone struct {
-	SubNetId       string        `json:"subnet_id,omitempty"`
-	SecurityGroups SecGroupClone `json:"security_groups,omitempty"`
-}
-
-type SecGroupClone struct {
-	Id string `json:"id,omitempty"`
+	SubNetId       string           `json:"subnet_id,omitempty"`
+	SecurityGroups []SecurityGroups `json:"security_groups,omitempty"`
 }
 
 type QueryConsoleAddRequest struct {
@@ -301,4 +473,37 @@ type QueryConsoleAddResponse struct {
 	Url      string `json:"url"`
 	Type     string `json:"type"`
 	Protocol string `json:"protocol"`
+}
+
+type CreateVmSnapshotRequest struct {
+	Domain   string                 `json:"domain"`
+	Token    string                 `json:"token"`
+	TenantId string                 `json:"tenantId"`
+	ServerId string                 `json:"server_id"`
+	Params   CreateVmSnapshotParams `json:"params"`
+}
+
+type CreateVmSnapshotParams struct {
+	CreateVmSnapshot CreateVmSnapshot `json:"createImage"`
+}
+
+type CreateVmSnapshot struct {
+	Name             string `json:"name"`
+	InstanceSnapshot string `json:"instance_snapshot"` //true,false
+}
+
+type ChangeVmPwdRequest struct {
+	Domain   string            `json:"domain"`
+	Token    string            `json:"token"`
+	TenantId string            `json:"tenantId"`
+	ServerId string            `json:"server_id"`
+	Params   ChangeVmPwdParams `json:"params"`
+}
+
+type ChangeVmPwdParams struct {
+	ResetPassword ResetPassword `json:"reset-password"`
+}
+
+type ResetPassword struct {
+	Password string `json:"new_password"`
 }

@@ -2,6 +2,12 @@ package model
 
 type JobResponse struct {
 	JobId string `json:"job_id"`
+	Error Error  `json:"error,omitempty"`
+}
+
+type Error struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 type JobInfo struct {
