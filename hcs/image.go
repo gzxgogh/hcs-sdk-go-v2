@@ -9,6 +9,30 @@ import (
 	"hcs-sdk-go-v2/request"
 )
 
+func CreateImage(params model.CreateImageRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2/cloudimages/action`, params.Domain)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+
+	var result model.QueryImageResponse
+	utils.FromJSON(utils.ToJSON(res["image"]), &result)
+	return models.Success[any](result)
+}
+
+func DeleteImage(params model.DeleteImageRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2/images/%s`, params.Domain, params.Id)
+	_, err := request.Delete(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
 func QueryImage(params model.QueryImageRequest) models.Result[any] {
 	if params.Id == "" {
 		url := fmt.Sprintf(`https://%s/v2.1/%s/images`, params.Domain, params.TenantId)

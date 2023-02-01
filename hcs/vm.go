@@ -345,20 +345,6 @@ func CloneVm(params model.CloneVmRequest) models.Result[any] {
 	return models.Success[any](nil)
 }
 
-// 创建并绑定弹性ip
-func CreateEipAndBand(params model.CreateFloatIpRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/floatingips`, params.Domain)
-	dataStr, err := request.Post(url, params.Token, params.Params)
-	if err != nil {
-		return models.Error(-1, err.Error())
-	}
-	res := make(map[string]interface{})
-	utils.FromJSON(dataStr, &res)
-	var result model.CreateFloatIpResponse
-	utils.FromJSON(utils.ToJSON(res["floatingip"]), &result)
-	return models.Success[any](result)
-}
-
 func QueryConsoleAddress(params model.QueryConsoleAddRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v1/%s/cloudservers/%s/remote_console`, params.Domain, params.TenantId, params.ServerId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -376,25 +362,6 @@ func QueryConsoleAddress(params model.QueryConsoleAddRequest) models.Result[any]
 	utils.FromJSON(utils.ToJSON(res["remote_console"]), &result)
 
 	return models.Success[any](result)
-}
-
-func CreateVmSnapshot(params model.CreateVmSnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.1/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
-	dataStr, err := request.Post(url, params.Token, params.Params)
-	if err != nil {
-		return models.Error(-1, err.Error())
-	}
-	var res model.JobResponse
-	utils.FromJSON(dataStr, &res)
-	if res.Error.Message != "" {
-		return models.Error(-1, res.Error.Message)
-	}
-	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
-	if err != nil {
-		return models.Error(-1, err.Error())
-	}
-
-	return models.Success[any](nil)
 }
 
 // 使用此API，需预先安装重置密码插件

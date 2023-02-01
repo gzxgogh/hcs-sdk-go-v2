@@ -2,6 +2,28 @@ package model
 
 import "time"
 
+type CreateImageRequest struct {
+	Domain   string            `json:"domain"`
+	Token    string            `json:"token"`
+	TenantId string            `json:"tenantId"`
+	Params   CreateImageParams `json:"params"`
+}
+
+type CreateImageParams struct {
+	CreateImage CreateImage `json:"ceateimage"`
+}
+
+type CreateImage struct {
+	Name string `json:"name"`
+}
+
+type DeleteImageRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	Id       string `json:"id"`
+}
+
 type QueryImageRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`

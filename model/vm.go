@@ -475,23 +475,6 @@ type QueryConsoleAddResponse struct {
 	Protocol string `json:"protocol"`
 }
 
-type CreateVmSnapshotRequest struct {
-	Domain   string                 `json:"domain"`
-	Token    string                 `json:"token"`
-	TenantId string                 `json:"tenantId"`
-	ServerId string                 `json:"server_id"`
-	Params   CreateVmSnapshotParams `json:"params"`
-}
-
-type CreateVmSnapshotParams struct {
-	CreateVmSnapshot CreateVmSnapshot `json:"createImage"`
-}
-
-type CreateVmSnapshot struct {
-	Name             string `json:"name"`
-	InstanceSnapshot string `json:"instance_snapshot"` //true,false
-}
-
 type ChangeVmPwdRequest struct {
 	Domain   string            `json:"domain"`
 	Token    string            `json:"token"`

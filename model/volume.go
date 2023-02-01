@@ -1,5 +1,23 @@
 package model
 
+type QueryVolumeTypeRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+}
+
+type QueryVolumeTypeResponse struct {
+	Id         string     `json:"id"`
+	Name       string     `json:"name"`
+	IsPublic   bool       `json:"is_public"`
+	ExtraSpecs ExtraSpecs `json:"extra_specs"`
+}
+
+type ExtraSpecs struct {
+	VolumeBackendName string `json:"volume_backend_name"`
+	AvailabilityZone  string `json:"availability-zone"`
+}
+
 type CreateVolumeRequest struct {
 	Domain   string             `json:"domain"`
 	Token    string             `json:"token"`
@@ -21,7 +39,7 @@ type Volume struct {
 	VolumeType         string `json:"volume_type"`        //SAS,business_type_01,hhw
 	ConsistencygroupId string `json:"consistencygroup_id,omitempty"`
 	SourceVolid        string `json:"source_volid,omitempty"`
-	SnapshotId         string `json:"snapshot_id,omitempty"`
+	SnapshotId         string `json:"snapshot_id,omitempty"` //快照id
 }
 
 type CreateVolumeResponse struct {
@@ -32,26 +50,76 @@ type CreateVolumeResponse struct {
 	Attachments      []interface{} `json:"attachments"`
 }
 
-type T struct {
-	Id               string        `json:"id"`
-	Name             string        `json:"name"`
-	Status           string        `json:"status"`
-	Attachments      []interface{} `json:"attachments"`
-	AvailabilityZone string        `json:"availability_zone"`
-	SourceVolid      interface{}   `json:"source_volid"`
-	SnapshotId       interface{}   `json:"snapshot_id"`
-	Description      interface{}   `json:"description"`
-	CreatedAt        string        `json:"created_at"`
-	VolumeType       string        `json:"volume_type"`
-	Size             int           `json:"size"`
-	Metadata         struct {
+type DeleteVolumeRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	Id       string `json:"id"`
+}
+
+type UpdateVolumeRequest struct {
+	Domain   string             `json:"domain"`
+	Token    string             `json:"token"`
+	TenantId string             `json:"tenantId"`
+	Id       string             `json:"id"`
+	Params   UpdateVolumeParams `json:"params"`
+}
+
+type UpdateVolumeParams struct {
+	UpdateVolume UpdateVolume `json:"volume"`
+}
+
+type UpdateVolume struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+type QueryVolumeRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	Id       string `json:"id,omitempty"`
+}
+
+type QueryVolumeResponse struct {
+	Id                 string        `json:"id"`
+	Name               string        `json:"name"`
+	Status             string        `json:"status"`
+	Attachments        []interface{} `json:"attachments"`
+	AvailabilityZone   string        `json:"availability_zone"`
+	SourceVolid        string        `json:"source_volid"`
+	SnapshotId         string        `json:"snapshot_id"`
+	Description        string        `json:"description"`
+	CreatedAt          string        `json:"created_at"`
+	VolumeType         string        `json:"volume_type"`
+	Size               int           `json:"size"`
+	ReplicationStatus  string        `json:"replication_status"`
+	Encrypted          bool          `json:"encrypted"`
+	UserId             string        `json:"user_id"`
+	ConsistencygroupId string        `json:"consistencygroup_id"`
+	Bootable           string        `json:"bootable"`
+	Shareable          bool          `json:"shareable"`
+	Multiattach        bool          `json:"multiattach"`
+	Metadata           struct {
+		LunWwn         string `json:"lun_wwn"`
+		StorageType    string `json:"StorageType"`
+		TakeOverLunWwn string `json:"take_over_lun_wwn"`
+		Readonly       string `json:"readonly"`
 	} `json:"metadata"`
-	ReplicationStatus  string      `json:"replication_status"`
-	Encrypted          bool        `json:"encrypted"`
-	UserId             string      `json:"user_id"`
-	ConsistencygroupId interface{} `json:"consistencygroup_id"`
-	Bootable           string      `json:"bootable"`
-	UpdatedAt          interface{} `json:"updated_at"`
-	Shareable          bool        `json:"shareable"`
-	Multiattach        bool        `json:"multiattach"`
+}
+
+type UpgradeVolumeRequest struct {
+	Domain   string              `json:"domain"`
+	Token    string              `json:"token"`
+	TenantId string              `json:"tenantId"`
+	Id       string              `json:"id"`
+	Params   UpgradeVolumeParams `json:"params"`
+}
+
+type UpgradeVolumeParams struct {
+	UpgradeVolume UpgradeVolume `json:"os-extend"`
+}
+
+type UpgradeVolume struct {
+	Size int `json:"new_size"`
 }
