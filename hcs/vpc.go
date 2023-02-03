@@ -8,6 +8,7 @@ import (
 	"hcs-sdk-go-v2/request"
 )
 
+// vpc
 func CreateVpc(params model.CreateVpcRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v1/%s/vpcs`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -77,6 +78,7 @@ func QueryVpc(params model.QueryVpcRequest) models.Result[any] {
 	}
 }
 
+// 子网
 func CreateSubnet(params model.CreateSubnetRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v1/%s/subnets`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -151,6 +153,7 @@ func QuerySubnet(params model.QuerySubnetRequest) models.Result[any] {
 	}
 }
 
+// 私有ip
 func CreatePrivateIp(params model.CreatePrivateIpRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v1/%s/privateips`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -206,6 +209,21 @@ func QueryPrivateIp(params model.QueryPrivateIpRequest) models.Result[any] {
 	}
 }
 
+// 虚拟ip
+func QueryVip(params model.QueryVipRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/ports?device_owner=neutron:VIP_PORT`, params.Domain)
+	dataStr, err := request.Get(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var list []model.QueryPortsResponse
+	utils.FromJSON(utils.ToJSON(res["ports"]), &list)
+
+	return models.Success[any](list)
+}
+
 func BandVip(params model.BandVipRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v1/%s/vport/%s`, params.Domain, params.TenantId, params.PrivateIpId)
 	_, err := request.Put(url, params.Token, params.Params)
@@ -226,6 +244,7 @@ func UnBandVip(params model.UnBandVipRequest) models.Result[any] {
 	return models.Success[any](nil)
 }
 
+// qos策略
 func CreateQosPolicy(params model.CreateQosPolicyRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v2.0/qos/policies`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -346,6 +365,7 @@ func QueryExternalNetworks(params model.QueryExternalNetworksRequest) models.Res
 	return models.Success[any](finalList)
 }
 
+// 对等连接
 func CreatePeer(params model.CreatePeerRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -481,16 +501,300 @@ func QueryPeerRouter(params model.QueryPeerRouterRequest) models.Result[any] {
 	return models.Success[any](finalList)
 }
 
-func QueryPorts(params model.QueryPortsRequest) models.Result[any] {
+// 端口
+func CreatePorts(params model.CreatePortsRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v1/%s/ports`, params.Domain, params.TenantId)
-	dataStr, err := request.Get(url, params.Token, params)
+	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var finalList []model.QueryPortsResponse
-	utils.FromJSON(utils.ToJSON(res["ports"]), &finalList)
+	var obj model.QueryPortsResponse
+	utils.FromJSON(utils.ToJSON(res["port"]), &obj)
 
-	return models.Success[any](finalList)
+	return models.Success[any](obj)
+}
+
+func DeletePorts(params model.DeletePortsRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
+	_, err := request.Delete(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
+func UpdatePorts(params model.UpdatePortsRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
+	dataStr, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryPortsResponse
+	utils.FromJSON(utils.ToJSON(res["port"]), &obj)
+
+	return models.Success[any](obj)
+}
+
+func QueryPorts(params model.QueryPortsRequest) models.Result[any] {
+	if params.PortId == "" {
+		url := fmt.Sprintf(`https://%s/v1/%s/ports`, params.Domain, params.TenantId)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var finalList []model.QueryPortsResponse
+		utils.FromJSON(utils.ToJSON(res["ports"]), &finalList)
+		return models.Success[any](finalList)
+	} else {
+		url := fmt.Sprintf(`https://%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var obj model.QueryPortsResponse
+		utils.FromJSON(utils.ToJSON(res["port"]), &obj)
+		return models.Success[any](obj)
+	}
+}
+
+// 路由
+// todo No VPC peering exist with id ff808082859c57d101861162b3fa0053"
+func CreateRoutes(params model.CreateRoutesRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/vpc/routes`, params.Domain)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryRoutesResponse
+	utils.FromJSON(utils.ToJSON(res["route"]), &obj)
+
+	return models.Success[any](obj)
+}
+
+func DeleteRoutes(params model.DeleteRoutesRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/vpc/routes/%s`, params.Domain, params.RouteId)
+	_, err := request.Delete(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	return models.Success[any](nil)
+}
+
+func QueryRoutes(params model.QueryRoutesRequest) models.Result[any] {
+	if params.Id == "" {
+		url := fmt.Sprintf(`https://%s/v2.0/vpc/routes`, params.Domain)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var finalList []model.QueryRoutesResponse
+		utils.FromJSON(utils.ToJSON(res["routes"]), &finalList)
+		return models.Success[any](finalList)
+	} else {
+		url := fmt.Sprintf(`https://%s/v2.0/vpc/routes/%s`, params.Domain, params.Id)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var obj model.QueryRoutesResponse
+		utils.FromJSON(utils.ToJSON(res["route"]), &obj)
+		return models.Success[any](obj)
+	}
+}
+
+// NAT网关
+// todo the API does not exist or has not been published in the environment
+func CreateNatGateways(params model.CreateNatGatewaysRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/nat_gateways`, params.Domain)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryNatGatewaysResponse
+	utils.FromJSON(utils.ToJSON(res["nat_gateway"]), &obj)
+
+	return models.Success[any](obj)
+}
+
+func DeleteNatGateways(params model.DeleteNatGatewaysRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
+	_, err := request.Delete(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
+func UpdateNatGateways(params model.UpdateNatGatewaysRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
+	dataStr, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryNatGatewaysResponse
+	utils.FromJSON(utils.ToJSON(res["nat_gateway"]), &obj)
+
+	return models.Success[any](obj)
+}
+
+func QueryNatGateways(params model.QueryNatGatewaysRequest) models.Result[any] {
+	if params.NatGatewayId == "" {
+		url := fmt.Sprintf(`https://%s/v2.0/nat_gateways`, params.Domain)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var finalList []model.QueryNatGatewaysResponse
+		utils.FromJSON(utils.ToJSON(res["nat_gateways"]), &finalList)
+		return models.Success[any](finalList)
+	} else {
+		url := fmt.Sprintf(`https://%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var obj model.QueryNatGatewaysResponse
+		utils.FromJSON(utils.ToJSON(res["nat_gateway"]), &obj)
+		return models.Success[any](obj)
+	}
+}
+
+// SNAT规则	the API does not exist or has not been published in the environment
+func CreateSNatRule(params model.CreateSNatRulesRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/snat_rules`, params.Domain)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QuerySNatRulesResponse
+	utils.FromJSON(utils.ToJSON(res["snat_rule"]), &obj)
+
+	return models.Success[any](obj)
+}
+
+func DeleteSNatRules(params model.DeleteSNatRulesRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/snat_rules/%s`, params.Domain, params.SNatRuleId)
+	_, err := request.Delete(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
+func QuerySNatRules(params model.QuerySNatRulesRequest) models.Result[any] {
+	if params.SNatRuleId == "" {
+		url := fmt.Sprintf(`https://%s/v2.0/snat_rules`, params.Domain)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var finalList []model.QuerySNatRulesResponse
+		utils.FromJSON(utils.ToJSON(res["snat_rules"]), &finalList)
+		return models.Success[any](finalList)
+	} else {
+		url := fmt.Sprintf(`https://%s/v2.0/snat_rules/%s`, params.Domain, params.NatGatewayId)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var obj model.QuerySNatRulesResponse
+		utils.FromJSON(utils.ToJSON(res["snat_rule"]), &obj)
+		return models.Success[any](obj)
+	}
+}
+
+// DNAT规则	the API does not exist or has not been published in the environment
+func CreateDNatRule(params model.CreateDNatRuleRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/dnat_rules`, params.Domain)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryDNatRulesResponse
+	utils.FromJSON(utils.ToJSON(res["nat_gateway"]), &obj)
+
+	return models.Success[any](obj)
+}
+
+func DeleteDNatRule(params model.DeleteDNatRuleRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
+	_, err := request.Delete(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
+func UpdateDNatRule(params model.UpdateDNatRuleRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
+	dataStr, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryDNatRulesResponse
+	utils.FromJSON(utils.ToJSON(res["nat_gateway"]), &obj)
+
+	return models.Success[any](obj)
+}
+
+func QueryDNatRules(params model.QueryDNatRulesRequest) models.Result[any] {
+	if params.DNatRuleId == "" {
+		url := fmt.Sprintf(`https://%s/v2.0/dnat_rules`, params.Domain)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var finalList []model.QueryDNatRulesResponse
+		utils.FromJSON(utils.ToJSON(res["dnat_rules"]), &finalList)
+		return models.Success[any](finalList)
+	} else {
+		url := fmt.Sprintf(`https://%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var obj model.QueryDNatRulesResponse
+		utils.FromJSON(utils.ToJSON(res["dnat_rule"]), &obj)
+		return models.Success[any](obj)
+	}
 }

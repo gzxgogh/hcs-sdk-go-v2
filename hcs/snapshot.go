@@ -46,6 +46,38 @@ func RevertVmSnapshot(params model.RevertVmSnapshotRequest) models.Result[any] {
 	return models.Success[any](nil)
 }
 
+func DeleteVmSnapshot(params model.DeleteVmSnapshotRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2/cloudimages`, params.Domain)
+	params.Params.IsSnapshotImage = "true"
+	dataStr, err := request.Delete(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	var res model.JobResponse
+	utils.FromJSON(dataStr, &res)
+	if res.Error.Message != "" {
+		return models.Error(-1, res.Error.Message)
+	}
+	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	return models.Success[any](nil)
+}
+
+func QueryVmSnapshot(params model.QuerySnapshotRequest) models.Result[any] {
+	url := fmt.Sprintf(`https://%s/v2/images`, params.Domain)
+	dataStr, err := request.Get(url, params.Token, params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var list []model.QueryVmSnapshotResponse
+	utils.FromJSON(utils.ToJSON(res["images"]), &list)
+	return models.Success[any](list)
+}
+
 func CreateVolumeSnapshot(params model.CreateVolumeSnapshotRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v2/%s/snapshots`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -70,7 +102,7 @@ func RevertVolumeSnapshot(params model.RevertVolumeSnapshotRequest) models.Resul
 	return models.Success[any](res)
 }
 
-func DeleteSnapshot(params model.DeleteSnapshotRequest) models.Result[any] {
+func DeleteVolumeSnapshot(params model.DeleteVolumeSnapshotRequest) models.Result[any] {
 	url := fmt.Sprintf(`https://%s/v2/%s/snapshots/%s`, params.Domain, params.TenantId, params.SnapshotId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
@@ -87,5 +119,7 @@ func QuerySnapshot(params model.QuerySnapshotRequest) models.Result[any] {
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	return models.Success[any](res)
+	var list []model.QueryVolumeSnapshotResponse
+	utils.FromJSON(utils.ToJSON(res["snapshots"]), &list)
+	return models.Success[any](list)
 }

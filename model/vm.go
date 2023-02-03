@@ -292,8 +292,8 @@ type QueryVmNicResponse []struct {
 }
 
 type FixedIps []struct {
-	SubnetId  string `json:"subnet_id"`
-	IpAddress string `json:"ip_address"`
+	SubnetId  string `json:"subnet_id,omitempty"`
+	IpAddress string `json:"ip_address,omitempty"`
 }
 
 type AttachNicRequest struct {
