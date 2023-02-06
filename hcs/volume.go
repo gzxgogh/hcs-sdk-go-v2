@@ -2,14 +2,14 @@ package hcs
 
 import (
 	"fmt"
+	"github.com/gzxgogh/hcs-sdk-go-v2/model"
+	"github.com/gzxgogh/hcs-sdk-go-v2/request"
 	"github.com/maczh/mgin/models"
 	"github.com/maczh/mgin/utils"
-	"hcs-sdk-go-v2/model"
-	"hcs-sdk-go-v2/request"
 )
 
 func QueryVolumeType(params model.QueryVolumeTypeRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/types`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v2/%s/types`, params.Domain, params.TenantId)
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -23,7 +23,7 @@ func QueryVolumeType(params model.QueryVolumeTypeRequest) models.Result[any] {
 }
 
 func CreateVolume(params model.CreateVolumeRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/volumes`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v2/%s/volumes`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -37,7 +37,7 @@ func CreateVolume(params model.CreateVolumeRequest) models.Result[any] {
 }
 
 func DeleteVolume(params model.DeleteVolumeRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/volumes/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v2/%s/volumes/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -47,7 +47,7 @@ func DeleteVolume(params model.DeleteVolumeRequest) models.Result[any] {
 }
 
 func UpdateVolume(params model.UpdateVolumeRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/volumes/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v2/%s/volumes/%s`, params.Domain, params.TenantId, params.Id)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -61,7 +61,7 @@ func UpdateVolume(params model.UpdateVolumeRequest) models.Result[any] {
 
 func QueryVolume(params model.QueryVolumeRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v2/%s/volumes/detail`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v2/%s/volumes/detail`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -74,7 +74,7 @@ func QueryVolume(params model.QueryVolumeRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2/%s/volumes/%s`, params.Domain, params.TenantId, params.Id)
+		url := fmt.Sprintf(`%s/v2/%s/volumes/%s`, params.Domain, params.TenantId, params.Id)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -94,7 +94,7 @@ func QueryVolume(params model.QueryVolumeRequest) models.Result[any] {
 }
 
 func UpgradeVolume(params model.UpgradeVolumeRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/volumes/%s/action`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v2/%s/volumes/%s/action`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())

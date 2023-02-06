@@ -2,15 +2,15 @@ package hcs
 
 import (
 	"fmt"
+	"github.com/gzxgogh/hcs-sdk-go-v2/model"
+	"github.com/gzxgogh/hcs-sdk-go-v2/request"
 	"github.com/maczh/mgin/models"
 	"github.com/maczh/mgin/utils"
-	"hcs-sdk-go-v2/model"
-	"hcs-sdk-go-v2/request"
 )
 
 // 创建并绑定弹性ip
 func CreateEipAndBand(params model.CreateFloatIpRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/floatingips`, params.Domain)
+	url := fmt.Sprintf(`%s/v2.0/floatingips`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -23,7 +23,7 @@ func CreateEipAndBand(params model.CreateFloatIpRequest) models.Result[any] {
 }
 
 func CreateEip(params model.CreateEipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/publicips`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/publicips`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -36,7 +36,7 @@ func CreateEip(params model.CreateEipRequest) models.Result[any] {
 }
 
 func DeleteEip(params model.DeleteEipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/publicips/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/publicips/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -46,7 +46,7 @@ func DeleteEip(params model.DeleteEipRequest) models.Result[any] {
 
 // 可以绑定和解绑弹性ip
 func UpdateEip(params model.UpdateEipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/publicips/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/publicips/%s`, params.Domain, params.TenantId, params.Id)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -60,7 +60,7 @@ func UpdateEip(params model.UpdateEipRequest) models.Result[any] {
 
 func QueryEip(params model.QueryEipRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/publicips`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/publicips`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -71,7 +71,7 @@ func QueryEip(params model.QueryEipRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["publicips"]), &list)
 		return models.Success[any](list)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/publicips/%s`, params.Domain, params.TenantId, params.Id)
+		url := fmt.Sprintf(`%s/v1/%s/publicips/%s`, params.Domain, params.TenantId, params.Id)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -92,7 +92,7 @@ func QueryEip(params model.QueryEipRequest) models.Result[any] {
 }
 
 func CreateShareBandwidth(params model.CreateShareBandwidthRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/%s/bandwidths`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -105,7 +105,7 @@ func CreateShareBandwidth(params model.CreateShareBandwidthRequest) models.Resul
 }
 
 func DeleteShareBandwidth(params model.DeleteShareBandwidthRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/%s/bandwidths/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -114,7 +114,7 @@ func DeleteShareBandwidth(params model.DeleteShareBandwidthRequest) models.Resul
 }
 
 func UpdateShareBandwidth(params model.UpdateShareBandwidthRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/%s/bandwidths/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths/%s`, params.Domain, params.TenantId, params.Id)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -128,7 +128,7 @@ func UpdateShareBandwidth(params model.UpdateShareBandwidthRequest) models.Resul
 
 func QueryShareBandwidth(params model.QueryShareBandwidthRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/bandwidths`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/bandwidths`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -139,7 +139,7 @@ func QueryShareBandwidth(params model.QueryShareBandwidthRequest) models.Result[
 		utils.FromJSON(utils.ToJSON(res["bandwidths"]), &list)
 		return models.Success[any](list)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/bandwidths/%s`, params.Domain, params.TenantId, params.Id)
+		url := fmt.Sprintf(`%s/v1/%s/bandwidths/%s`, params.Domain, params.TenantId, params.Id)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -158,7 +158,7 @@ func QueryShareBandwidth(params model.QueryShareBandwidthRequest) models.Result[
 }
 
 func ShareBandwidthAttachEip(params model.ShareBandwidthAttachEipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/%s/bandwidths/%s/insert`, params.Domain, params.TenantId, params.BandwidthId)
+	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths/%s/insert`, params.Domain, params.TenantId, params.BandwidthId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -171,7 +171,7 @@ func ShareBandwidthAttachEip(params model.ShareBandwidthAttachEipRequest) models
 }
 
 func ShareBandwidthDetachEip(params model.ShareBandwidthDetachEipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/%s/bandwidths/%s/remove`, params.Domain, params.TenantId, params.BandwidthId)
+	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths/%s/remove`, params.Domain, params.TenantId, params.BandwidthId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())

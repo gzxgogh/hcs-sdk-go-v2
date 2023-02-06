@@ -2,14 +2,14 @@ package hcs
 
 import (
 	"fmt"
+	"github.com/gzxgogh/hcs-sdk-go-v2/model"
+	"github.com/gzxgogh/hcs-sdk-go-v2/request"
 	"github.com/maczh/mgin/models"
 	"github.com/maczh/mgin/utils"
-	"hcs-sdk-go-v2/model"
-	"hcs-sdk-go-v2/request"
 )
 
 func CreateSg(params model.CreateSgRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/security-groups`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/security-groups`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -22,7 +22,7 @@ func CreateSg(params model.CreateSgRequest) models.Result[any] {
 }
 
 func DeleteSg(params model.DeleteSgRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/security-groups/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/security-groups/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -32,7 +32,7 @@ func DeleteSg(params model.DeleteSgRequest) models.Result[any] {
 }
 
 func UpdateSg(params model.UpdateSgRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/security-groups/%s`, params.Domain, params.Id)
+	url := fmt.Sprintf(`%s/v2.0/security-groups/%s`, params.Domain, params.Id)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -46,7 +46,7 @@ func UpdateSg(params model.UpdateSgRequest) models.Result[any] {
 
 func QuerySg(params model.QuerySgRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/security-groups`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/security-groups`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -57,7 +57,7 @@ func QuerySg(params model.QuerySgRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["security_groups"]), &list)
 		return models.Success[any](list)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/security-groups/%s`, params.Domain, params.TenantId, params.Id)
+		url := fmt.Sprintf(`%s/v1/%s/security-groups/%s`, params.Domain, params.TenantId, params.Id)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -76,7 +76,7 @@ func QuerySg(params model.QuerySgRequest) models.Result[any] {
 }
 
 func CreateSgRule(params model.CreateSgRuleRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/security-group-rules`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/security-group-rules`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -89,7 +89,7 @@ func CreateSgRule(params model.CreateSgRuleRequest) models.Result[any] {
 }
 
 func DeleteSgRule(params model.DeleteSgRuleRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/security-group-rules/%s`, params.Domain, params.TenantId, params.RuleId)
+	url := fmt.Sprintf(`%s/v1/%s/security-group-rules/%s`, params.Domain, params.TenantId, params.RuleId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -99,7 +99,7 @@ func DeleteSgRule(params model.DeleteSgRuleRequest) models.Result[any] {
 }
 
 func QuerySgRule(params model.QuerySgRuleRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/security-group-rules`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/security-group-rules`, params.Domain, params.TenantId)
 	dataStr, err := request.Get(url, params.Token, params)
 	if err != nil {
 		return models.Error(-1, err.Error())

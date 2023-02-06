@@ -2,14 +2,14 @@ package hcs
 
 import (
 	"fmt"
+	"github.com/gzxgogh/hcs-sdk-go-v2/model"
+	"github.com/gzxgogh/hcs-sdk-go-v2/request"
 	"github.com/maczh/mgin/models"
 	"github.com/maczh/mgin/utils"
-	"hcs-sdk-go-v2/model"
-	"hcs-sdk-go-v2/request"
 )
 
 func CreateVmSnapshot(params model.CreateVmSnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.1/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
+	url := fmt.Sprintf(`%s/v2.1/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -28,7 +28,7 @@ func CreateVmSnapshot(params model.CreateVmSnapshotRequest) models.Result[any] {
 }
 
 func RevertVmSnapshot(params model.RevertVmSnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.1/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
+	url := fmt.Sprintf(`%s/v2.1/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -47,7 +47,7 @@ func RevertVmSnapshot(params model.RevertVmSnapshotRequest) models.Result[any] {
 }
 
 func DeleteVmSnapshot(params model.DeleteVmSnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/cloudimages`, params.Domain)
+	url := fmt.Sprintf(`%s/v2/cloudimages`, params.Domain)
 	params.Params.IsSnapshotImage = "true"
 	dataStr, err := request.Delete(url, params.Token, params.Params)
 	if err != nil {
@@ -66,7 +66,7 @@ func DeleteVmSnapshot(params model.DeleteVmSnapshotRequest) models.Result[any] {
 }
 
 func QueryVmSnapshot(params model.QuerySnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/images`, params.Domain)
+	url := fmt.Sprintf(`%s/v2/images`, params.Domain)
 	dataStr, err := request.Get(url, params.Token, params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -79,7 +79,7 @@ func QueryVmSnapshot(params model.QuerySnapshotRequest) models.Result[any] {
 }
 
 func CreateVolumeSnapshot(params model.CreateVolumeSnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/snapshots`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v2/%s/snapshots`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -91,7 +91,7 @@ func CreateVolumeSnapshot(params model.CreateVolumeSnapshotRequest) models.Resul
 }
 
 func RevertVolumeSnapshot(params model.RevertVolumeSnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/os-vendor-snapshots/%s/rollback`, params.Domain, params.TenantId, params.SnapshotId)
+	url := fmt.Sprintf(`%s/v2/%s/os-vendor-snapshots/%s/rollback`, params.Domain, params.TenantId, params.SnapshotId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -103,7 +103,7 @@ func RevertVolumeSnapshot(params model.RevertVolumeSnapshotRequest) models.Resul
 }
 
 func DeleteVolumeSnapshot(params model.DeleteVolumeSnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/snapshots/%s`, params.Domain, params.TenantId, params.SnapshotId)
+	url := fmt.Sprintf(`%s/v2/%s/snapshots/%s`, params.Domain, params.TenantId, params.SnapshotId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -112,7 +112,7 @@ func DeleteVolumeSnapshot(params model.DeleteVolumeSnapshotRequest) models.Resul
 }
 
 func QuerySnapshot(params model.QuerySnapshotRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/%s/snapshots/detail`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v2/%s/snapshots/detail`, params.Domain, params.TenantId)
 	dataStr, err := request.Get(url, params.Token, params)
 	if err != nil {
 		return models.Error(-1, err.Error())

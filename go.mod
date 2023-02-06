@@ -1,4 +1,4 @@
-module hcs-sdk-go-v2
+module github.com/gzxgogh/hcs-sdk-go-v2
 
 go 1.19
 

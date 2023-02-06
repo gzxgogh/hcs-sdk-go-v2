@@ -146,6 +146,41 @@ func Delete(url, token string, params interface{}) (string, error) {
 	return resStr, nil
 }
 
+func DeleteWithoutBody(url, token string) (string, error) {
+	logs.Debug("请求类型:DELETE,请求url：{}", url)
+
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr} //忽略https的请求
+
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		logs.Error("http请求错误:{}", err.Error())
+		return "", err
+	}
+	req.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	req.Header.Add("X-Auth-Token", token)
+	res, err := client.Do(req)
+	if err != nil {
+		logs.Error("http请求错误:{}", err.Error())
+		return "", err
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		logs.Error("解析错误:{}", err.Error())
+		return "", err
+	}
+	resStr := string(body)
+	logs.Debug("http请求返回的数据:{}", resStr)
+	if res.StatusCode >= 300 {
+		return "", errors.New(resStr)
+	}
+
+	return resStr, nil
+}
+
 func Put(url, token string, params interface{}) (string, error) {
 	logs.Debug("请求参数：{}", params)
 	logs.Debug("请求类型:PUT,请求url：{}", url)

@@ -2,15 +2,15 @@ package hcs
 
 import (
 	"fmt"
+	"github.com/gzxgogh/hcs-sdk-go-v2/model"
+	"github.com/gzxgogh/hcs-sdk-go-v2/request"
 	"github.com/maczh/mgin/models"
 	"github.com/maczh/mgin/utils"
-	"hcs-sdk-go-v2/model"
-	"hcs-sdk-go-v2/request"
 )
 
 // vpc
 func CreateVpc(params model.CreateVpcRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcs`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcs`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -24,7 +24,7 @@ func CreateVpc(params model.CreateVpcRequest) models.Result[any] {
 }
 
 func DeleteVpc(params model.DeleteVpcRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcs/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/vpcs/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -34,7 +34,7 @@ func DeleteVpc(params model.DeleteVpcRequest) models.Result[any] {
 }
 
 func UpdateVpc(params model.UpdateVpcRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcs/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/vpcs/%s`, params.Domain, params.TenantId, params.Id)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -49,7 +49,7 @@ func UpdateVpc(params model.UpdateVpcRequest) models.Result[any] {
 
 func QueryVpc(params model.QueryVpcRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/vpcs`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/vpcs`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -61,7 +61,7 @@ func QueryVpc(params model.QueryVpcRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/vpcs/%s`, params.Domain, params.TenantId, params.Id)
+		url := fmt.Sprintf(`%s/v1/%s/vpcs/%s`, params.Domain, params.TenantId, params.Id)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -80,7 +80,7 @@ func QueryVpc(params model.QueryVpcRequest) models.Result[any] {
 
 // 子网
 func CreateSubnet(params model.CreateSubnetRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/subnets`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/subnets`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -94,7 +94,7 @@ func CreateSubnet(params model.CreateSubnetRequest) models.Result[any] {
 }
 
 func DeleteSubnet(params model.DeleteSubnetRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/subnets/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/subnets/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -104,12 +104,12 @@ func DeleteSubnet(params model.DeleteSubnetRequest) models.Result[any] {
 }
 
 func UpdateSubnet(params model.UpdateSubnetRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcs/%s/subnets/%s`, params.Domain, params.TenantId, params.VpcId, params.SubnetId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcs/%s/subnets/%s`, params.Domain, params.TenantId, params.VpcId, params.SubnetId)
 	_, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
-	url = fmt.Sprintf(`https://%s/v1/%s/subnets/%s`, params.Domain, params.TenantId, params.SubnetId)
+	url = fmt.Sprintf(`%s/v1/%s/subnets/%s`, params.Domain, params.TenantId, params.SubnetId)
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -124,7 +124,7 @@ func UpdateSubnet(params model.UpdateSubnetRequest) models.Result[any] {
 
 func QuerySubnet(params model.QuerySubnetRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/subnets`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/subnets`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -136,7 +136,7 @@ func QuerySubnet(params model.QuerySubnetRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/subnets/%s`, params.Domain, params.TenantId, params.Id)
+		url := fmt.Sprintf(`%s/v1/%s/subnets/%s`, params.Domain, params.TenantId, params.Id)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -155,7 +155,7 @@ func QuerySubnet(params model.QuerySubnetRequest) models.Result[any] {
 
 // 私有ip
 func CreatePrivateIp(params model.CreatePrivateIpRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/privateips`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/privateips`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -169,7 +169,7 @@ func CreatePrivateIp(params model.CreatePrivateIpRequest) models.Result[any] {
 }
 
 func DeletePrivateIp(params model.DeletePrivateIpRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/privateips/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/privateips/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -180,7 +180,7 @@ func DeletePrivateIp(params model.DeletePrivateIpRequest) models.Result[any] {
 
 func QueryPrivateIp(params model.QueryPrivateIpRequest) models.Result[any] {
 	if params.PrivateIpId == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/subnets/%s/privateips`, params.Domain, params.TenantId, params.SubnetId)
+		url := fmt.Sprintf(`%s/v1/%s/subnets/%s/privateips`, params.Domain, params.TenantId, params.SubnetId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -192,7 +192,7 @@ func QueryPrivateIp(params model.QueryPrivateIpRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/privateips/%s`, params.Domain, params.TenantId, params.PrivateIpId)
+		url := fmt.Sprintf(`%s/v1/%s/privateips/%s`, params.Domain, params.TenantId, params.PrivateIpId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -211,7 +211,7 @@ func QueryPrivateIp(params model.QueryPrivateIpRequest) models.Result[any] {
 
 // 虚拟ip
 func QueryVip(params model.QueryVipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/ports?device_owner=neutron:VIP_PORT`, params.Domain)
+	url := fmt.Sprintf(`%s/v2.0/ports?device_owner=neutron:VIP_PORT`, params.Domain)
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -225,7 +225,7 @@ func QueryVip(params model.QueryVipRequest) models.Result[any] {
 }
 
 func BandVip(params model.BandVipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vport/%s`, params.Domain, params.TenantId, params.PrivateIpId)
+	url := fmt.Sprintf(`%s/v1/%s/vport/%s`, params.Domain, params.TenantId, params.PrivateIpId)
 	_, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -235,7 +235,7 @@ func BandVip(params model.BandVipRequest) models.Result[any] {
 }
 
 func UnBandVip(params model.UnBandVipRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vport/%s`, params.Domain, params.TenantId, params.PrivateIpId)
+	url := fmt.Sprintf(`%s/v1/%s/vport/%s`, params.Domain, params.TenantId, params.PrivateIpId)
 	_, err := request.Delete(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -246,7 +246,7 @@ func UnBandVip(params model.UnBandVipRequest) models.Result[any] {
 
 // qos策略
 func CreateQosPolicy(params model.CreateQosPolicyRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/qos/policies`, params.Domain)
+	url := fmt.Sprintf(`%s/v2.0/qos/policies`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -260,7 +260,7 @@ func CreateQosPolicy(params model.CreateQosPolicyRequest) models.Result[any] {
 }
 
 func DeleteQosPolicy(params model.DeleteQosPolicyRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/qos/policies/%s`, params.Domain, params.PolicyId)
+	url := fmt.Sprintf(`%s/v2.0/qos/policies/%s`, params.Domain, params.PolicyId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -270,7 +270,7 @@ func DeleteQosPolicy(params model.DeleteQosPolicyRequest) models.Result[any] {
 }
 
 func UpdateQosPolicy(params model.UpdateQosPolicyRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/qos/policies/%s`, params.Domain, params.PolicyId)
+	url := fmt.Sprintf(`%s/v2.0/qos/policies/%s`, params.Domain, params.PolicyId)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -285,7 +285,7 @@ func UpdateQosPolicy(params model.UpdateQosPolicyRequest) models.Result[any] {
 
 func QueryQosPolicy(params model.QueryQosPolicyRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v2.0/qos/policies`, params.Domain)
+		url := fmt.Sprintf(`%s/v2.0/qos/policies`, params.Domain)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -297,7 +297,7 @@ func QueryQosPolicy(params model.QueryQosPolicyRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2.0/qos/policies/%s`, params.Domain, params.Id)
+		url := fmt.Sprintf(`%s/v2.0/qos/policies/%s`, params.Domain, params.Id)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -317,9 +317,9 @@ func QueryQosPolicy(params model.QueryQosPolicyRequest) models.Result[any] {
 }
 
 // todo	端口限速规则
-func QueryPolicyRule(params model.QueryPolicyRuleRequest) models.Result[any] {
+func QueryPolicyBandwidthRule(params model.QueryPolicyBandwidthRuleRequest) models.Result[any] {
 	if params.RuleId == "" {
-		url := fmt.Sprintf(`https://%s/v2.0/qos/policies/%s/bandwidth_limit_rules`, params.Domain, params.PolicyId)
+		url := fmt.Sprintf(`%s/v2.0/qos/policies/%s/bandwidth_limit_rules`, params.Domain, params.PolicyId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -331,7 +331,7 @@ func QueryPolicyRule(params model.QueryPolicyRuleRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2.0/qos/policies/%s/bandwidth_limit_rules/%s`, params.Domain, params.PolicyId, params.RuleId)
+		url := fmt.Sprintf(`%s/v2.0/qos/policies/%s/bandwidth_limit_rules/%s`, params.Domain, params.PolicyId, params.RuleId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -352,7 +352,7 @@ func QueryPolicyRule(params model.QueryPolicyRuleRequest) models.Result[any] {
 
 // 查询外部网络
 func QueryExternalNetworks(params model.QueryExternalNetworksRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/external_networks`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/external_networks`, params.Domain, params.TenantId)
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -365,9 +365,25 @@ func QueryExternalNetworks(params model.QueryExternalNetworksRequest) models.Res
 	return models.Success[any](finalList)
 }
 
+// 查询公有网络
+func QueryPublicNet(params model.QueryPublicNetRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/networks?router:external=True&tags=service_type=Internet`, params.Domain)
+	dataStr, err := request.Get(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+
+	var list []model.QueryPublicNetResponse
+	utils.FromJSON(utils.ToJSON(res["networks"]), &list)
+
+	return models.Success[any](list)
+}
+
 // 对等连接
 func CreatePeer(params model.CreatePeerRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -381,7 +397,7 @@ func CreatePeer(params model.CreatePeerRequest) models.Result[any] {
 }
 
 func DeletePeer(params model.DeletePeerRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -391,7 +407,7 @@ func DeletePeer(params model.DeletePeerRequest) models.Result[any] {
 }
 
 func UpdatePeer(params model.UpdatePeerRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering/%s`, params.Domain, params.TenantId, params.Id)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/%s`, params.Domain, params.TenantId, params.Id)
 	_, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -402,7 +418,7 @@ func UpdatePeer(params model.UpdatePeerRequest) models.Result[any] {
 
 func QueryPeer(params model.QueryPeerRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/vpcpeering`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -414,7 +430,7 @@ func QueryPeer(params model.QueryPeerRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/vpcpeering`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -431,7 +447,7 @@ func QueryPeer(params model.QueryPeerRequest) models.Result[any] {
 }
 
 func AcceptPeer(params model.ActionPeerRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering/%s/accept`, params.Domain, params.TenantId, params.PeerId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/%s/accept`, params.Domain, params.TenantId, params.PeerId)
 	dataStr, err := request.Put(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -445,7 +461,7 @@ func AcceptPeer(params model.ActionPeerRequest) models.Result[any] {
 }
 
 func RejectPeer(params model.ActionPeerRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering/%s/reject`, params.Domain, params.TenantId, params.PeerId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/%s/reject`, params.Domain, params.TenantId, params.PeerId)
 	dataStr, err := request.Post(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -460,7 +476,7 @@ func RejectPeer(params model.ActionPeerRequest) models.Result[any] {
 
 // 添加本端路由或者添加对端路由取决于vpcId的值
 func CreatePeerRouter(params model.ActionPeerRouterRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering/router/%s/addroutes`, params.Domain, params.TenantId, params.VpcId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/router/%s/addroutes`, params.Domain, params.TenantId, params.VpcId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -474,7 +490,7 @@ func CreatePeerRouter(params model.ActionPeerRouterRequest) models.Result[any] {
 }
 
 func DeletePeerRouter(params model.ActionPeerRouterRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering/router/%s/removeroutes`, params.Domain, params.TenantId, params.VpcId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/router/%s/removeroutes`, params.Domain, params.TenantId, params.VpcId)
 	dataStr, err := request.Delete(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -488,7 +504,7 @@ func DeletePeerRouter(params model.ActionPeerRouterRequest) models.Result[any] {
 }
 
 func QueryPeerRouter(params model.QueryPeerRouterRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/vpcpeering/router/%s/queryroutes`, params.Domain, params.TenantId, params.VpcId)
+	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/router/%s/queryroutes`, params.Domain, params.TenantId, params.VpcId)
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -503,7 +519,7 @@ func QueryPeerRouter(params model.QueryPeerRouterRequest) models.Result[any] {
 
 // 端口
 func CreatePorts(params model.CreatePortsRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/ports`, params.Domain, params.TenantId)
+	url := fmt.Sprintf(`%s/v1/%s/ports`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -517,7 +533,7 @@ func CreatePorts(params model.CreatePortsRequest) models.Result[any] {
 }
 
 func DeletePorts(params model.DeletePortsRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
+	url := fmt.Sprintf(`%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -527,7 +543,7 @@ func DeletePorts(params model.DeletePortsRequest) models.Result[any] {
 }
 
 func UpdatePorts(params model.UpdatePortsRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
+	url := fmt.Sprintf(`%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -542,7 +558,7 @@ func UpdatePorts(params model.UpdatePortsRequest) models.Result[any] {
 
 func QueryPorts(params model.QueryPortsRequest) models.Result[any] {
 	if params.PortId == "" {
-		url := fmt.Sprintf(`https://%s/v1/%s/ports`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/ports`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -553,7 +569,7 @@ func QueryPorts(params model.QueryPortsRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["ports"]), &finalList)
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
+		url := fmt.Sprintf(`%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -569,7 +585,7 @@ func QueryPorts(params model.QueryPortsRequest) models.Result[any] {
 // 路由
 // todo No VPC peering exist with id ff808082859c57d101861162b3fa0053"
 func CreateRoutes(params model.CreateRoutesRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/vpc/routes`, params.Domain)
+	url := fmt.Sprintf(`%s/v2.0/vpc/routes`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -583,7 +599,7 @@ func CreateRoutes(params model.CreateRoutesRequest) models.Result[any] {
 }
 
 func DeleteRoutes(params model.DeleteRoutesRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/vpc/routes/%s`, params.Domain, params.RouteId)
+	url := fmt.Sprintf(`%s/v2.0/vpc/routes/%s`, params.Domain, params.RouteId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -593,7 +609,7 @@ func DeleteRoutes(params model.DeleteRoutesRequest) models.Result[any] {
 
 func QueryRoutes(params model.QueryRoutesRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v2.0/vpc/routes`, params.Domain)
+		url := fmt.Sprintf(`%s/v2.0/vpc/routes`, params.Domain)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -604,7 +620,7 @@ func QueryRoutes(params model.QueryRoutesRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["routes"]), &finalList)
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2.0/vpc/routes/%s`, params.Domain, params.Id)
+		url := fmt.Sprintf(`%s/v2.0/vpc/routes/%s`, params.Domain, params.Id)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -620,7 +636,7 @@ func QueryRoutes(params model.QueryRoutesRequest) models.Result[any] {
 // NAT网关
 // todo the API does not exist or has not been published in the environment
 func CreateNatGateways(params model.CreateNatGatewaysRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/nat_gateways`, params.Domain)
+	url := fmt.Sprintf(`%s/v2.0/nat_gateways`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -634,7 +650,7 @@ func CreateNatGateways(params model.CreateNatGatewaysRequest) models.Result[any]
 }
 
 func DeleteNatGateways(params model.DeleteNatGatewaysRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
+	url := fmt.Sprintf(`%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -644,7 +660,7 @@ func DeleteNatGateways(params model.DeleteNatGatewaysRequest) models.Result[any]
 }
 
 func UpdateNatGateways(params model.UpdateNatGatewaysRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
+	url := fmt.Sprintf(`%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -659,7 +675,7 @@ func UpdateNatGateways(params model.UpdateNatGatewaysRequest) models.Result[any]
 
 func QueryNatGateways(params model.QueryNatGatewaysRequest) models.Result[any] {
 	if params.NatGatewayId == "" {
-		url := fmt.Sprintf(`https://%s/v2.0/nat_gateways`, params.Domain)
+		url := fmt.Sprintf(`%s/v2.0/nat_gateways`, params.Domain)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -670,7 +686,7 @@ func QueryNatGateways(params model.QueryNatGatewaysRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["nat_gateways"]), &finalList)
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
+		url := fmt.Sprintf(`%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -685,7 +701,7 @@ func QueryNatGateways(params model.QueryNatGatewaysRequest) models.Result[any] {
 
 // SNAT规则	the API does not exist or has not been published in the environment
 func CreateSNatRule(params model.CreateSNatRulesRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/snat_rules`, params.Domain)
+	url := fmt.Sprintf(`%s/v2.0/snat_rules`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -699,7 +715,7 @@ func CreateSNatRule(params model.CreateSNatRulesRequest) models.Result[any] {
 }
 
 func DeleteSNatRules(params model.DeleteSNatRulesRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/snat_rules/%s`, params.Domain, params.SNatRuleId)
+	url := fmt.Sprintf(`%s/v2.0/snat_rules/%s`, params.Domain, params.SNatRuleId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -710,7 +726,7 @@ func DeleteSNatRules(params model.DeleteSNatRulesRequest) models.Result[any] {
 
 func QuerySNatRules(params model.QuerySNatRulesRequest) models.Result[any] {
 	if params.SNatRuleId == "" {
-		url := fmt.Sprintf(`https://%s/v2.0/snat_rules`, params.Domain)
+		url := fmt.Sprintf(`%s/v2.0/snat_rules`, params.Domain)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -721,7 +737,7 @@ func QuerySNatRules(params model.QuerySNatRulesRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["snat_rules"]), &finalList)
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2.0/snat_rules/%s`, params.Domain, params.NatGatewayId)
+		url := fmt.Sprintf(`%s/v2.0/snat_rules/%s`, params.Domain, params.NatGatewayId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -736,7 +752,7 @@ func QuerySNatRules(params model.QuerySNatRulesRequest) models.Result[any] {
 
 // DNAT规则	the API does not exist or has not been published in the environment
 func CreateDNatRule(params model.CreateDNatRuleRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/dnat_rules`, params.Domain)
+	url := fmt.Sprintf(`%s/v2.0/dnat_rules`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -750,7 +766,7 @@ func CreateDNatRule(params model.CreateDNatRuleRequest) models.Result[any] {
 }
 
 func DeleteDNatRule(params model.DeleteDNatRuleRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
+	url := fmt.Sprintf(`%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -760,7 +776,7 @@ func DeleteDNatRule(params model.DeleteDNatRuleRequest) models.Result[any] {
 }
 
 func UpdateDNatRule(params model.UpdateDNatRuleRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
+	url := fmt.Sprintf(`%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
 	dataStr, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -775,7 +791,7 @@ func UpdateDNatRule(params model.UpdateDNatRuleRequest) models.Result[any] {
 
 func QueryDNatRules(params model.QueryDNatRulesRequest) models.Result[any] {
 	if params.DNatRuleId == "" {
-		url := fmt.Sprintf(`https://%s/v2.0/dnat_rules`, params.Domain)
+		url := fmt.Sprintf(`%s/v2.0/dnat_rules`, params.Domain)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -786,7 +802,7 @@ func QueryDNatRules(params model.QueryDNatRulesRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["dnat_rules"]), &finalList)
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
+		url := fmt.Sprintf(`%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())

@@ -2,15 +2,15 @@ package hcs
 
 import (
 	"fmt"
+	"github.com/gzxgogh/hcs-sdk-go-v2/model"
+	"github.com/gzxgogh/hcs-sdk-go-v2/request"
 	"github.com/maczh/mgin/logs"
 	"github.com/maczh/mgin/models"
 	"github.com/maczh/mgin/utils"
-	"hcs-sdk-go-v2/model"
-	"hcs-sdk-go-v2/request"
 )
 
 func CreateImage(params model.CreateImageRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/cloudimages/action`, params.Domain)
+	url := fmt.Sprintf(`%s/v2/cloudimages/action`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -24,7 +24,7 @@ func CreateImage(params model.CreateImageRequest) models.Result[any] {
 }
 
 func DeleteImage(params model.DeleteImageRequest) models.Result[any] {
-	url := fmt.Sprintf(`https://%s/v2/images/%s`, params.Domain, params.Id)
+	url := fmt.Sprintf(`%s/v2/images/%s`, params.Domain, params.Id)
 	_, err := request.Delete(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -35,7 +35,7 @@ func DeleteImage(params model.DeleteImageRequest) models.Result[any] {
 
 func QueryImage(params model.QueryImageRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`https://%s/v2.1/%s/images`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v2.1/%s/images`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -64,7 +64,7 @@ func QueryImage(params model.QueryImageRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`https://%s/v2.1/%s/images/%s`, params.Domain, params.TenantId, params.Id)
+		url := fmt.Sprintf(`%s/v2.1/%s/images/%s`, params.Domain, params.TenantId, params.Id)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())

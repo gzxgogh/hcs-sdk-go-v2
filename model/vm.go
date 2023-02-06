@@ -441,7 +441,7 @@ type CloneVm struct {
 	KeyName   string   `json:"key_name,omitempty"`
 	UserData  string   `json:"user_data,omitempty"`
 	Metadata  string   `json:"metadata,omitempty"`
-	PowerOn   bool     `json:"power_on,omitempty"`
+	PowerOn   bool     `json:"power_on"`
 	Postfix   string   `json:"postfix,omitempty"`
 	VpcId     string   `json:"vpc_id,omitempty"`
 	Nics      NicClone `json:"nics,omitempty"`
