@@ -1,6 +1,7 @@
 package hcs
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gzxgogh/hcs-sdk-go-v2/model"
 	"github.com/gzxgogh/hcs-sdk-go-v2/request"
@@ -21,11 +22,14 @@ func CreateVm(params model.CreateVmRequest) models.Result[any] {
 		return models.Error(-1, res.Error.Message)
 	}
 
-	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	jobInfo, err := ExecCreateJob(params.Domain, params.TenantId, params.Token, res.JobId)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
-	return models.Success[any](nil)
+	obj := model.CreateVmResponse{
+		ServerId: fmt.Sprint(jobInfo.Entities["server_id"]),
+	}
+	return models.Success[any](obj)
 }
 
 func CreateVmFromVolume(params model.CreateVmFromVolumeRequest) models.Result[any] {
@@ -395,9 +399,44 @@ func ExecJob(domain, tenantId, token, jobId string) error {
 		var jobRes model.JobInfo
 		utils.FromJSON(dataStr, &jobRes)
 		if jobRes.Status == "SUCCESS" {
-			break
+			return nil
+		}
+		if jobRes.Status == "FAIL" {
+			if len(jobRes.Entities.SubJobs) > 0 {
+				return errors.New(jobRes.Entities.SubJobs[0].FailReason)
+			} else {
+				return errors.New(jobRes.FailReason)
+			}
 		}
 		time.Sleep(1 * time.Second)
 	}
 	return nil
+}
+
+func ExecCreateJob(domain, tenantId, token, jobId string) (model.SubJobInfo, error) {
+	for i := 0; i < 60; i++ {
+		url := fmt.Sprintf(`%s/v1/%s/jobs/%s`, domain, tenantId, jobId)
+		dataStr, err := request.Get(url, token, nil)
+		if err != nil {
+			return model.SubJobInfo{}, err
+		}
+		var jobRes model.JobInfo
+		utils.FromJSON(dataStr, &jobRes)
+		if jobRes.Status == "SUCCESS" {
+			if len(jobRes.Entities.SubJobs) > 0 {
+				return jobRes.Entities.SubJobs[0], nil
+			} else {
+				return model.SubJobInfo{}, err
+			}
+		}
+		if jobRes.Status == "FAIL" {
+			if len(jobRes.Entities.SubJobs) > 0 {
+				return model.SubJobInfo{}, errors.New(jobRes.Entities.SubJobs[0].FailReason)
+			} else {
+				return model.SubJobInfo{}, errors.New(jobRes.FailReason)
+			}
+		}
+		time.Sleep(1 * time.Second)
+	}
+	return model.SubJobInfo{}, nil
 }

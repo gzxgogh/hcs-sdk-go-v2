@@ -85,6 +85,7 @@ type QueryEipRequest struct {
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
 	Id       string `json:"id,omitempty"`
+	PortId   string `json:"port_id"`
 }
 
 type QueryEipResponse struct {

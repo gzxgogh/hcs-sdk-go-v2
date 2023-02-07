@@ -61,7 +61,7 @@ func UpdateEip(params model.UpdateEipRequest) models.Result[any] {
 func QueryEip(params model.QueryEipRequest) models.Result[any] {
 	if params.Id == "" {
 		url := fmt.Sprintf(`%s/v1/%s/publicips`, params.Domain, params.TenantId)
-		dataStr, err := request.Get(url, params.Token, nil)
+		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}

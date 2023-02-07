@@ -9,6 +9,10 @@ type CreateVmRequest struct {
 	Params   CreateVmParams `json:"params"`
 }
 
+type CreateVmResponse struct {
+	ServerId string `json:"serverId"`
+}
+
 type CreateVmParams struct {
 	Server CreateVm `json:"server"`
 }

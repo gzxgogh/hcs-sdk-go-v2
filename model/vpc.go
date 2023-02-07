@@ -579,6 +579,7 @@ type QueryPortsResponse struct {
 	CreatedAt           string                 `json:"created_at"`
 	UpdatedAt           string                 `json:"updated_at"`
 	ProjectId           string                 `json:"project_id"`
+	QosPolicyId         string                 `json:"qos_policy_id"`
 }
 
 type CreateRoutesRequest struct {
