@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type CreateVmRequest struct {
 	Domain   string         `json:"domain"`
 	Token    string         `json:"token"`
@@ -180,35 +178,54 @@ type QueryVmRequest struct {
 }
 
 type QueryVmResponse struct {
-	TenantId                         string                           `json:"tenant_id"`
-	Metadata                         VmMetadata                       `json:"metadata"`
-	Addresses                        map[string]interface{}           `json:"addresses"` //"addresses": { "subnet-74e5-gogh": [ { "OS-EXT-IPS-MAC:mac_addr": "fa:16:3e:fd:98:59", "OS-EXT-IPS:type": "fixed", "addr": "192.168.123.140", "version": 4} ]},
-	OSEXTSTSTaskState                interface{}                      `json:"OS-EXT-STS:task_state"`
-	OSDCFDiskConfig                  string                           `json:"OS-DCF:diskConfig"`
-	OSEXTAZAvailabilityZone          string                           `json:"OS-EXT-AZ:availability_zone"`
-	OSEXTSTSPowerState               int                              `json:"OS-EXT-STS:power_state"`
+	Fault                            interface{}                      `json:"fault"`
 	Id                               string                           `json:"id"`
-	OsExtendedVolumesVolumesAttached OsExtendedVolumesVolumesAttached `json:"os-extended-volumes:volumes_attached"`
-	OSEXTSRVATTRHost                 string                           `json:"OS-EXT-SRV-ATTR:host"`
-	Image                            VmImage                          `json:"image,omitempty"`
-	OSSRVUSGTerminatedAt             interface{}                      `json:"OS-SRV-USG:terminated_at"`
+	Name                             string                           `json:"name"`
+	Description                      string                           `json:"description"`
+	Addresses                        map[string]interface{}           `json:"addresses"` //"addresses": { "subnet-74e5-gogh": [ { "OS-EXT-IPS-MAC:mac_addr": "fa:16:3e:fd:98:59", "OS-EXT-IPS:type": "fixed", "addr": "192.168.123.140", "version": 4} ]},
+	Flavor                           VmFlavor                         `json:"flavor"`
 	AccessIPv4                       string                           `json:"accessIPv4"`
 	AccessIPv6                       string                           `json:"accessIPv6"`
-	Created                          time.Time                        `json:"created"`
-	HostId                           string                           `json:"hostId"`
-	OSEXTSRVATTRHypervisorHostname   string                           `json:"OS-EXT-SRV-ATTR:hypervisor_hostname"`
-	Flavor                           VmFlavor                         `json:"flavor"`
-	KeyName                          string                           `json:"key_name"`
-	SecurityGroups                   VmSecurityGroups                 `json:"security_groups"`
-	ConfigDrive                      string                           `json:"config_drive"`
-	OSEXTSTSVmState                  string                           `json:"OS-EXT-STS:vm_state"`
-	UserId                           string                           `json:"user_id"`
-	OSEXTSRVATTRInstanceName         string                           `json:"OS-EXT-SRV-ATTR:instance_name"`
-	Name                             string                           `json:"name"`
-	Progress                         int                              `json:"progress"`
-	OSSRVUSGLaunchedAt               string                           `json:"OS-SRV-USG:launched_at"`
-	Updated                          time.Time                        `json:"updated"`
 	Status                           string                           `json:"status"`
+	Progress                         int                              `json:"progress"`
+	HostId                           string                           `json:"hostId"`
+	Created                          string                           `json:"created"`
+	Metadata                         VmMetadata                       `json:"metadata"`
+	Tags                             []string                         `json:"tags"`
+	Locked                           bool                             `json:"locked"`
+	InterfaceAttachments             interface{}                      `json:"interfaceAttachments"`
+	ConfigDrive                      string                           `json:"config_drive"`
+	TenantId                         string                           `json:"tenant_id"`
+	UserId                           string                           `json:"user_id"`
+	KeyName                          interface{}                      `json:"key_name"`
+	OsExtendedVolumesVolumesAttached OsExtendedVolumesVolumesAttached `json:"os-extended-volumes:volumes_attached"`
+	OSEXTSTSTaskState                interface{}                      `json:"OS-EXT-STS:task_state"`
+	OSEXTSTSPowerState               int                              `json:"OS-EXT-STS:power_state"`
+	OSEXTSTSVmState                  string                           `json:"OS-EXT-STS:vm_state"`
+	OSEXTSRVATTRHost                 string                           `json:"OS-EXT-SRV-ATTR:host"`
+	OSEXTSRVATTRInstanceName         string                           `json:"OS-EXT-SRV-ATTR:instance_name"`
+	OSEXTSRVATTRHypervisorHostname   string                           `json:"OS-EXT-SRV-ATTR:hypervisor_hostname"`
+	OSDCFDiskConfig                  string                           `json:"OS-DCF:diskConfig"`
+	OSEXTAZAvailabilityZone          string                           `json:"OS-EXT-AZ:availability_zone"`
+	OsSchedulerHints                 OsSchedulerHints                 `json:"os:scheduler_hints"`
+	OSEXTSRVATTRRootDeviceName       string                           `json:"OS-EXT-SRV-ATTR:root_device_name"`
+	OSEXTSRVATTRRamdiskId            string                           `json:"OS-EXT-SRV-ATTR:ramdisk_id"`
+	EnterpriseProjectId              string                           `json:"enterprise_project_id"`
+	OSEXTSRVATTRUserData             interface{}                      `json:"OS-EXT-SRV-ATTR:user_data"`
+	OSSRVUSGLaunchedAt               string                           `json:"OS-SRV-USG:launched_at"`
+	OSEXTSRVATTRKernelId             string                           `json:"OS-EXT-SRV-ATTR:kernel_id"`
+	OSEXTSRVATTRLaunchIndex          int                              `json:"OS-EXT-SRV-ATTR:launch_index"`
+	HostStatus                       string                           `json:"host_status"`
+	OSEXTSRVATTRReservationId        string                           `json:"OS-EXT-SRV-ATTR:reservation_id"`
+	OSEXTSRVATTRHostname             string                           `json:"OS-EXT-SRV-ATTR:hostname"`
+	OSEXTSRVATTROsHostname           string                           `json:"OS-EXT-SRV-ATTR:os_hostname"`
+	OSSRVUSGTerminatedAt             interface{}                      `json:"OS-SRV-USG:terminated_at"`
+	SysTags                          interface{}                      `json:"sys_tags"`
+	SecurityGroups                   VmSecurityGroups                 `json:"security_groups"`
+	Image                            VmImage                          `json:"image"`
+	BlockDevice                      interface{}                      `json:"block_device"`
+	CpuVendor                        interface{}                      `json:"cpu_vendor"`
+	Architecture                     interface{}                      `json:"architecture"`
 }
 
 type ItemNotFound struct {
@@ -217,15 +234,22 @@ type ItemNotFound struct {
 }
 
 type VmMetadata struct {
-	ProductId                 string `json:"productId"`
-	InstanceVwatchdog         string `json:"__instance_vwatchdog"`
-	ServerExpiry              string `json:"server_expiry"`
-	HaPolicyType              string `json:"_ha_policy_type"`
+	ImageName                 string `json:"image_name"`
+	MeteringResourcespeccode  string `json:"metering.resourcespeccode"`
+	ChargingMode              string `json:"charging_mode"`
+	VpcId                     string `json:"vpc_id"`
+	OsType                    string `json:"os_type"`
+	MeteringImageId           string `json:"metering.image_id"`
+	MeteringResourcetype      string `json:"metering.resourcetype"`
+	OsBit                     string `json:"os_bit"`
+	MeteringImagetype         string `json:"metering.imagetype"`
 	CascadedInstanceExtrainfo string `json:"cascaded.instance_extrainfo"`
 }
 
 type OsExtendedVolumesVolumesAttached []struct {
-	Id string `json:"id"`
+	Id                  string  `json:"id"`
+	DeleteOnTermination string  `json:"delete_on_termination"`
+	BootIndex           *string `json:"bootIndex"`
 }
 
 type VmImage struct {
@@ -233,11 +257,20 @@ type VmImage struct {
 }
 
 type VmFlavor struct {
-	Id string `json:"id"`
+	Disk  string `json:"disk"`
+	Vcpus string `json:"vcpus"`
+	Ram   string `json:"ram"`
+	Id    string `json:"id"`
+	Name  string `json:"name"`
 }
 
 type VmSecurityGroups []struct {
-	Name string `json:"name"`
+	Id          string      `json:"id"`
+	Name        string      `json:"name"`
+	Description interface{} `json:"description"`
+	Rules       interface{} `json:"rules"`
+	Links       interface{} `json:"links"`
+	TenantId    interface{} `json:"tenant_id"`
 }
 
 type StartVmRequest struct {
@@ -375,6 +408,13 @@ type DetachVolumeRequest struct {
 	TenantId string `json:"tenantId"`
 	ServerId string `json:"server_id"`
 	VolumeId string `json:"volume_id"`
+}
+
+type QueryCanUpgradeSpecRequest struct {
+	Domain       string `json:"domain"`
+	Token        string `json:"token"`
+	TenantId     string `json:"tenantId"`
+	InstanceUuid string `json:"instance_uuid,omitempty"`
 }
 
 type UpgradeVmRequest struct {

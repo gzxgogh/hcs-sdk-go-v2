@@ -80,7 +80,7 @@ func UpdateVm(params model.UpdateVmRequest) models.Result[any] {
 
 func QueryVm(params model.QueryVmRequest) models.Result[any] {
 	if params.ServerId == "" {
-		url := fmt.Sprintf(`%s/v2/%s/servers/detail`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/cloudservers/detail`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -92,7 +92,7 @@ func QueryVm(params model.QueryVmRequest) models.Result[any] {
 
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`%s/v2/%s/servers/%s`, params.Domain, params.TenantId, params.ServerId)
+		url := fmt.Sprintf(`%s/v1/%s/cloudservers/%s`, params.Domain, params.TenantId, params.ServerId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -113,13 +113,13 @@ func QueryVm(params model.QueryVmRequest) models.Result[any] {
 
 func StartVm(params model.StartVmRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
-	_, err := request.Post(url, params.Token, nil)
+	_, err := request.Post(url, params.Token, params.Action)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
 	for i := 0; i < 60; i++ {
 		url = fmt.Sprintf(`%s/v2/%s/servers/%s`, params.Domain, params.TenantId, params.ServerId)
-		dataStr, err := request.Get(url, params.Token, params)
+		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
@@ -214,10 +214,10 @@ func AttachVmNic(params model.AttachNicRequest) models.Result[any] {
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var list model.QueryVmNicResponse
-	utils.FromJSON(utils.ToJSON(res["interfaceAttachments"]), &list)
+	var obj model.QueryVmNicResponse
+	utils.FromJSON(utils.ToJSON(res["interfaceAttachments"]), &obj)
 
-	return models.Success[any](list)
+	return models.Success[any](obj)
 }
 
 func BatchAttachVmNic(params model.BatchAttachNicRequest) models.Result[any] {
@@ -257,10 +257,10 @@ func AttachVmVolume(params model.AttachVolumeRequest) models.Result[any] {
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var list model.AttachVolumeResponse
-	utils.FromJSON(utils.ToJSON(res["volumeAttachment"]), &list)
+	var obj model.AttachVolumeResponse
+	utils.FromJSON(utils.ToJSON(res["volumeAttachment"]), &obj)
 
-	return models.Success[any](list)
+	return models.Success[any](obj)
 }
 
 func DetachVmVolume(params model.DetachVolumeRequest) models.Result[any] {
@@ -271,6 +271,20 @@ func DetachVmVolume(params model.DetachVolumeRequest) models.Result[any] {
 	}
 
 	return models.Success[any](nil)
+}
+
+func QueryCanUpgradeSpec(params model.QueryCanUpgradeSpecRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v1/%s/cloudservers/resize_flavors`, params.Domain, params.TenantId)
+	dataStr, err := request.Get(url, params.Token, params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var list []model.QuerySpecResponse
+	utils.FromJSON(utils.ToJSON(res["flavors"]), &list)
+
+	return models.Success[any](list)
 }
 
 func UpgradeVm(params model.UpgradeVmRequest) models.Result[any] {
@@ -390,7 +404,7 @@ func CheckCanChangePwd(params model.VmRequest) models.Result[any] {
 }
 
 func ExecJob(domain, tenantId, token, jobId string) error {
-	for i := 0; i < 60; i++ {
+	for i := 0; i < 120; i++ {
 		url := fmt.Sprintf(`%s/v1/%s/jobs/%s`, domain, tenantId, jobId)
 		dataStr, err := request.Get(url, token, nil)
 		if err != nil {
@@ -414,7 +428,7 @@ func ExecJob(domain, tenantId, token, jobId string) error {
 }
 
 func ExecCreateJob(domain, tenantId, token, jobId string) (model.SubJobInfo, error) {
-	for i := 0; i < 60; i++ {
+	for i := 0; i < 120; i++ {
 		url := fmt.Sprintf(`%s/v1/%s/jobs/%s`, domain, tenantId, jobId)
 		dataStr, err := request.Get(url, token, nil)
 		if err != nil {

@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type JobResponse struct {
 	JobId string `json:"job_id"`
 	Error Error  `json:"error,omitempty"`
@@ -29,8 +27,8 @@ type JobInfo struct {
 type SubJobInfo struct {
 	JobId      string                 `json:"job_id"`
 	JobType    string                 `json:"job_type"`
-	BeginTime  time.Time              `json:"begin_time"`
-	EndTime    time.Time              `json:"end_time"`
+	BeginTime  string                 `json:"begin_time"`
+	EndTime    string                 `json:"end_time"`
 	Status     string                 `json:"status"`
 	ErrorCode  string                 `json:"error_code"`
 	FailReason string                 `json:"fail_reason"`
