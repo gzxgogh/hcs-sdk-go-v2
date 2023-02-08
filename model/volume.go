@@ -82,24 +82,32 @@ type QueryVolumeRequest struct {
 }
 
 type QueryVolumeResponse struct {
-	Id                 string        `json:"id"`
-	Name               string        `json:"name"`
-	Status             string        `json:"status"`
-	Attachments        []interface{} `json:"attachments"`
-	AvailabilityZone   string        `json:"availability_zone"`
-	SourceVolid        string        `json:"source_volid"`
-	SnapshotId         string        `json:"snapshot_id"`
-	Description        string        `json:"description"`
-	CreatedAt          string        `json:"created_at"`
-	VolumeType         string        `json:"volume_type"`
-	Size               int           `json:"size"`
-	ReplicationStatus  string        `json:"replication_status"`
-	Encrypted          bool          `json:"encrypted"`
-	UserId             string        `json:"user_id"`
-	ConsistencygroupId string        `json:"consistencygroup_id"`
-	Bootable           string        `json:"bootable"`
-	Shareable          bool          `json:"shareable"`
-	Multiattach        bool          `json:"multiattach"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Status      string `json:"status"`
+	Attachments []struct {
+		AttachedAt   string `json:"attached_at"`
+		AttachmentId string `json:"attachment_id"`
+		Device       string `json:"device"`
+		HostName     string `json:"host_name"`
+		Id           string `json:"id"`
+		ServerId     string `json:"server_id"`
+		VolumeId     string `json:"volume_id"`
+	} `json:"attachments"`
+	AvailabilityZone   string `json:"availability_zone"`
+	SourceVolid        string `json:"source_volid"`
+	SnapshotId         string `json:"snapshot_id"`
+	Description        string `json:"description"`
+	CreatedAt          string `json:"created_at"`
+	VolumeType         string `json:"volume_type"`
+	Size               int    `json:"size"`
+	ReplicationStatus  string `json:"replication_status"`
+	Encrypted          bool   `json:"encrypted"`
+	UserId             string `json:"user_id"`
+	ConsistencygroupId string `json:"consistencygroup_id"`
+	Bootable           string `json:"bootable"`
+	Shareable          bool   `json:"shareable"`
+	Multiattach        bool   `json:"multiattach"`
 	Metadata           struct {
 		LunWwn         string `json:"lun_wwn"`
 		StorageType    string `json:"StorageType"`

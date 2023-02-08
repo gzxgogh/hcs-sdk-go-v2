@@ -57,7 +57,7 @@ type QueryImageResponse struct {
 	ImageSourceType        string    `json:"__image_source_type"`
 	Imagetype              string    `json:"__imagetype"`
 	CreatedAt              time.Time `json:"created_at"`
-	VirtualSize1           int       `json:"virtual_size"`
+	VirtualSize            int       `json:"__virtual_size"`
 	ImageSize              int       `json:"__image_size"`
 	DataOrigin             string    `json:"__data_origin"`
 	SupportKvm             string    `json:"__support_kvm"`

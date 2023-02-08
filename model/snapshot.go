@@ -19,6 +19,10 @@ type CreateVmSnapshot struct {
 	InstanceSnapshot string `json:"instance_snapshot"` //true,false
 }
 
+type CreateVmSnapshotResponse struct {
+	ImageId string `json:"imageId"`
+}
+
 type RevertVmSnapshotRequest struct {
 	Domain   string                 `json:"domain"`
 	Token    string                 `json:"token"`
@@ -129,6 +133,27 @@ type CreateVolumeSnapshot struct {
 	Force       bool   `json:"force"`
 }
 
+type CreateVolumeSnapshotResponse struct {
+	Id          string `json:"id"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	VolumeId    string `json:"volume_id"`
+	Status      string `json:"status"`
+	Size        string `json:"size"`
+	Metadata    struct {
+		SnapshotFromInstance string `json:"__snapshot_from_instance"`
+		SnapshotWwn          string `json:"snapshot_wwn"`
+		SystemEnableActive   string `json:"__system__enableActive"`
+	} `json:"metadata"`
+	OsExtendedSnapshotAttributesProviderLocation string `json:"os-extended-snapshot-attributes:provider_location"`
+	OsVendorExtAttrVendorDriverMetadata          struct {
+	} `json:"os-vendor-ext-attr:vendor_driver_metadata"`
+	OsExtendedSnapshotAttributesProjectId string `json:"os-extended-snapshot-attributes:project_id"`
+	OsExtendedSnapshotAttributesProgress  string `json:"os-extended-snapshot-attributes:progress"`
+}
+
 type RevertVolumeSnapshotRequest struct {
 	Domain     string                     `json:"domain"`
 	Token      string                     `json:"token"`
@@ -142,7 +167,7 @@ type RevertVolumeSnapshotParams struct {
 }
 
 type RevertVolumeSnapshot struct {
-	Name     string `json:"name"`
+	Name     string `json:"name,omitempty"`
 	VolumeId string `json:"volume_id"`
 }
 
@@ -157,6 +182,7 @@ type QuerySnapshotRequest struct {
 	Domain     string `json:"domain"`
 	Token      string `json:"token"`
 	TenantId   string `json:"tenantId"`
+	Id         string `json:"id"`
 	InstanceId string `json:"__snapshot_from_instance,omitempty"`
 	VolumeId   string `json:"volume_id,omitempty"`
 }

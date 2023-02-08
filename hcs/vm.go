@@ -22,12 +22,14 @@ func CreateVm(params model.CreateVmRequest) models.Result[any] {
 		return models.Error(-1, res.Error.Message)
 	}
 
-	jobInfo, err := ExecCreateJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	result, err := ExecCreateJob(params.Domain, params.TenantId, params.Token, res.JobId)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
+	var subJobInfo model.SubJobInfo
+	utils.FromJSON(utils.ToJSON(result), &subJobInfo)
 	obj := model.CreateVmResponse{
-		ServerId: fmt.Sprint(jobInfo.Entities["server_id"]),
+		ServerId: subJobInfo.Entities["server_id"].(string),
 	}
 	return models.Success[any](obj)
 }
@@ -427,7 +429,7 @@ func ExecJob(domain, tenantId, token, jobId string) error {
 	return nil
 }
 
-func ExecCreateJob(domain, tenantId, token, jobId string) (model.SubJobInfo, error) {
+func ExecCreateJob(domain, tenantId, token, jobId string) (interface{}, error) {
 	for i := 0; i < 120; i++ {
 		url := fmt.Sprintf(`%s/v1/%s/jobs/%s`, domain, tenantId, jobId)
 		dataStr, err := request.Get(url, token, nil)
@@ -440,17 +442,19 @@ func ExecCreateJob(domain, tenantId, token, jobId string) (model.SubJobInfo, err
 			if len(jobRes.Entities.SubJobs) > 0 {
 				return jobRes.Entities.SubJobs[0], nil
 			} else {
-				return model.SubJobInfo{}, err
+				var subJobRes model.SubJobInfo
+				utils.FromJSON(dataStr, &subJobRes)
+				return subJobRes, err
 			}
 		}
 		if jobRes.Status == "FAIL" {
 			if len(jobRes.Entities.SubJobs) > 0 {
-				return model.SubJobInfo{}, errors.New(jobRes.Entities.SubJobs[0].FailReason)
+				return nil, errors.New(jobRes.Entities.SubJobs[0].FailReason)
 			} else {
-				return model.SubJobInfo{}, errors.New(jobRes.FailReason)
+				return nil, errors.New(jobRes.FailReason)
 			}
 		}
 		time.Sleep(1 * time.Second)
 	}
-	return model.SubJobInfo{}, nil
+	return nil, nil
 }
