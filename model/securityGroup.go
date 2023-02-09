@@ -113,3 +113,19 @@ type QuerySgRuleRequest struct {
 	SecurityGroupId string `json:"security_group_id,omitempty"`
 	Id              string `json:"id,omitempty"`
 }
+
+type BandNicToSgRequest struct {
+	Domain   string            `json:"domain"`
+	Token    string            `json:"token"`
+	TenantId string            `json:"tenantId"`
+	PortId   string            `json:"portId"`
+	Params   BandNicToSgParams `json:"params"`
+}
+
+type BandNicToSgParams struct {
+	BandNicToSg BandNicToSg `json:"port"`
+}
+
+type BandNicToSg struct {
+	SecurityGroups []string `json:"security_groups"`
+}

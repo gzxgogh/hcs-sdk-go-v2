@@ -182,7 +182,7 @@ type QuerySnapshotRequest struct {
 	Domain     string `json:"domain"`
 	Token      string `json:"token"`
 	TenantId   string `json:"tenantId"`
-	Id         string `json:"id"`
+	Id         string `json:"id,omitempty"`
 	InstanceId string `json:"__snapshot_from_instance,omitempty"`
 	VolumeId   string `json:"volume_id,omitempty"`
 }

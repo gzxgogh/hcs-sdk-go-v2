@@ -549,8 +549,8 @@ type QueryPortsRequest struct {
 	Token          string `json:"token"`
 	TenantId       string `json:"tenantId"`
 	PortId         string `json:"portId,omitempty"`
-	Status         string `json:"status,omitempty"`    //端口状态。取值范围： ACTIVE、BUILD、DOWN
-	FixedIps       string `json:"fixed_ips,omitempty"` //端口IP地址。
+	Status         string `json:"status,omitempty"`     //端口状态。取值范围： ACTIVE、BUILD、DOWN
+	FixedIps       string `json:"ip_address,omitempty"` //端口IP地址。
 	NetworkId      string `json:"network_id,omitempty"`
 	DeviceId       string `json:"device_id,omitempty"`       //端口所属设备id，如虚拟机 uuid。
 	SecurityGroups string `json:"security_groups,omitempty"` //安全组id

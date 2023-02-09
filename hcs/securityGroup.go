@@ -115,3 +115,16 @@ func QuerySgRule(params model.QuerySgRuleRequest) models.Result[any] {
 	utils.FromJSON(utils.ToJSON(res["security_group_rules"]), &list)
 	return models.Success[any](list)
 }
+
+func BandNicToSg(params model.BandNicToSgRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/ports/%s`, params.Domain, params.PortId)
+	dataStr, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryPortsResponse
+	utils.FromJSON(utils.ToJSON(res["port"]), &obj)
+	return models.Success[any](obj)
+}

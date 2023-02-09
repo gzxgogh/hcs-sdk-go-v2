@@ -2,24 +2,65 @@ package model
 
 import "time"
 
-type CreateImageRequest struct {
-	Domain   string      `json:"domain"`
-	Token    string      `json:"token"`
-	TenantId string      `json:"tenantId"`
-	Params   CreateImage `json:"params"`
+type CreateVmImageRequest struct {
+	Domain    string        `json:"domain"`
+	Token     string        `json:"token"`
+	TenantId  string        `json:"tenantId"`
+	EcsDomain string        `json:"ecsDomain"`
+	Params    CreateVmImage `json:"params"`
 }
 
-type CreateImage struct {
+type CreateVmImage struct {
 	Name        string `json:"name"`
 	InstanceId  string `json:"instance_id"`
 	Description string `json:"description,omitempty"`
 }
 
+type CreateVolumeImageRequest struct {
+	Domain    string                  `json:"domain"`
+	Token     string                  `json:"token"`
+	TenantId  string                  `json:"tenantId"`
+	EcsDomain string                  `json:"ecsDomain"`
+	Params    CreateVolumeImageParams `json:"params"`
+}
+
+type CreateVolumeImageParams struct {
+	Name       string      `json:"name,omitempty"`
+	InstanceId string      `json:"instance_id"`
+	DataImages []DataImage `json:"data_images"`
+}
+
+type DataImage struct {
+	VolumeId string `json:"volume_id"`
+}
+
+type CreateVolumeImageResponse struct {
+	ImageId string `json:"imageId"`
+}
+
 type DeleteImageRequest struct {
-	Domain   string `json:"domain"`
-	Token    string `json:"token"`
-	TenantId string `json:"tenantId"`
-	Id       string `json:"id"`
+	Domain   string      `json:"domain"`
+	Token    string      `json:"token"`
+	TenantId string      `json:"tenantId"`
+	Params   DeleteImage `json:"params"`
+}
+
+type DeleteImage struct {
+	Images []string `json:"images"`
+}
+
+type UpdateImageRequest struct {
+	Domain   string        `json:"domain"`
+	Token    string        `json:"token"`
+	TenantId string        `json:"tenantId"`
+	ImageId  string        `json:"imageId"`
+	Params   []UpdateImage `json:"params"`
+}
+
+type UpdateImage struct {
+	Op    string `json:"op"`
+	Path  string `json:"path"`
+	Value string `json:"value"`
 }
 
 type QueryImageRequest struct {
@@ -27,6 +68,7 @@ type QueryImageRequest struct {
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
 	Id       string `json:"id,omitempty"`
+	Name     string `json:"name,omitempty"`
 }
 
 type QueryImageResponse struct {
@@ -57,7 +99,7 @@ type QueryImageResponse struct {
 	ImageSourceType        string    `json:"__image_source_type"`
 	Imagetype              string    `json:"__imagetype"`
 	CreatedAt              time.Time `json:"created_at"`
-	VirtualSize            int       `json:"__virtual_size"`
+	VirtualSize            string    `json:"__virtual_size"`
 	ImageSize              int       `json:"__image_size"`
 	DataOrigin             string    `json:"__data_origin"`
 	SupportKvm             string    `json:"__support_kvm"`
@@ -70,41 +112,4 @@ type QueryImageResponse struct {
 	SupportKvmInfiniband   string    `json:"__support_kvm_infiniband"`
 	IsConfigInit           string    `json:"__is_config_init"`
 	SystemSupportMarket    bool      `json:"__system_support_market"`
-}
-
-type ImageMetadata struct {
-	SupportLiveResize      string `json:"__support_live_resize"`
-	SystemEncrypted        string `json:"__system_encrypted"`
-	ImgSignatureHashMethod string `json:"img_signature_hash_method"`
-	ImageSourceType        string `json:"__image_source_type"`
-	SupportKvmVgpu         string `json:"__support_kvm_vgpu"`
-	ImgSignatureKeyType    string `json:"img_signature_key_type"`
-	SupportKvmNpu          string `json:"__support_kvm_npu"`
-	SupportStaticIp        string `json:"__support_static_ip"`
-	Isregistered           string `json:"__isregistered"`
-	FileFormat             string `json:"file_format"`
-	Architecture           string `json:"architecture"`
-	ImgSignature           string `json:"img_signature"`
-	VirtualSize            string `json:"__virtual_size"`
-	HwFirmwareType         string `json:"hw_firmware_type"`
-	OsType                 string `json:"__os_type"`
-	Imagetype              string `json:"__imagetype"`
-	FileName               string `json:"file_name"`
-	Cloudinit              string `json:"cloudinit"`
-	QuickStart             string `json:"__quick_start"`
-	VirtualEnvType         string `json:"virtual_env_type"`
-	SupportKvmGpu          string `json:"__support_kvm_gpu"`
-	SupportKvm             string `json:"__support_kvm"`
-	AccountCode            string `json:"__account_code"`
-	SupportKvmNvmeSsd      string `json:"__support_kvm_nvme_ssd"`
-	HwDiskBus              string `json:"hw_disk_bus"`
-	ImgDigestValue         string `json:"img_digest_value"`
-	Platform               string `json:"__platform"`
-	SupportKvmHana         string `json:"__support_kvm_hana"`
-	OriDiskFormat          string `json:"ori_disk_format"`
-	IsAutoConfig           string `json:"is_auto_config"`
-	OsBit                  string `json:"__os_bit"`
-	OsVersion              string `json:"__os_version"`
-	AdminEncrypted         string `json:"__admin_encrypted"`
-	Describe               string `json:"describe"`
 }
