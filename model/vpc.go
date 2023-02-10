@@ -47,10 +47,10 @@ type QueryVpcRequest struct {
 }
 
 type QueryVpcResponse struct {
-	Id                  string      `json:"id"`
-	Name                string      `json:"name"`
-	Cidr                interface{} `json:"cidr"`
-	Status              string      `json:"status"`
+	Id                  string `json:"id"`
+	Name                string `json:"name"`
+	Cidr                string `json:"cidr"`
+	Status              string `json:"status"`
 	ExternalGatewayInfo struct {
 		NetworkId        string `json:"network_id"`
 		EnableSnat       bool   `json:"enable_snat"`

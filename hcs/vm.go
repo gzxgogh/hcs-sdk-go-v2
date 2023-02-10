@@ -406,7 +406,8 @@ func CheckCanChangePwd(params model.VmRequest) models.Result[any] {
 }
 
 func ExecJob(domain, tenantId, token, jobId string) error {
-	for i := 0; i < 120; i++ {
+	for {
+		time.Sleep(1 * time.Second)
 		url := fmt.Sprintf(`%s/v1/%s/jobs/%s`, domain, tenantId, jobId)
 		dataStr, err := request.Get(url, token, nil)
 		if err != nil {
@@ -424,13 +425,12 @@ func ExecJob(domain, tenantId, token, jobId string) error {
 				return errors.New(jobRes.FailReason)
 			}
 		}
-		time.Sleep(1 * time.Second)
 	}
-	return nil
 }
 
 func ExecCreateJob(domain, tenantId, token, jobId string) (interface{}, error) {
-	for i := 0; i < 120; i++ {
+	for {
+		time.Sleep(1 * time.Second)
 		url := fmt.Sprintf(`%s/v1/%s/jobs/%s`, domain, tenantId, jobId)
 		dataStr, err := request.Get(url, token, nil)
 		if err != nil {
@@ -454,7 +454,5 @@ func ExecCreateJob(domain, tenantId, token, jobId string) (interface{}, error) {
 				return nil, errors.New(jobRes.FailReason)
 			}
 		}
-		time.Sleep(1 * time.Second)
 	}
-	return nil, nil
 }

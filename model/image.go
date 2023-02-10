@@ -112,4 +112,5 @@ type QueryImageResponse struct {
 	SupportKvmInfiniband   string    `json:"__support_kvm_infiniband"`
 	IsConfigInit           string    `json:"__is_config_init"`
 	SystemSupportMarket    bool      `json:"__system_support_market"`
+	WholeImage             string    `json:"__whole_image"`
 }
