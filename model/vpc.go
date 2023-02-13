@@ -336,6 +336,7 @@ type QueryPublicNetRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
+	Id       string `json:"id"`
 }
 
 type QueryPublicNetResponse struct {

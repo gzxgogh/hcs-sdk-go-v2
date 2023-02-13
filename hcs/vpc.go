@@ -368,6 +368,9 @@ func QueryExternalNetworks(params model.QueryExternalNetworksRequest) models.Res
 // 查询公有网络
 func QueryPublicNet(params model.QueryPublicNetRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/networks?router:external=True&tags=service_type=Internet`, params.Domain)
+	if params.Id != "" {
+		url = fmt.Sprintf(`%s/v2.0/networks?router:external=True&tags=service_type=Internet&id=%s`, params.Domain, params.Id)
+	}
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
