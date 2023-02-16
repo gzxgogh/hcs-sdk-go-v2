@@ -25,9 +25,10 @@ type CreateVolumeImageRequest struct {
 }
 
 type CreateVolumeImageParams struct {
-	Name       string      `json:"name,omitempty"`
-	InstanceId string      `json:"instance_id"`
-	DataImages []DataImage `json:"data_images"`
+	Name        string      `json:"name,omitempty"`
+	InstanceId  string      `json:"instance_id"`
+	Description string      `json:"description,omitempty"`
+	DataImages  []DataImage `json:"data_images"`
 }
 
 type DataImage struct {
