@@ -10,6 +10,12 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+type JobErr struct {
+	ErrorMsg  string `json:"error_msg"`
+	ErrorCode string `json:"error_code"`
+	RequestId string `json:"request_id"`
+}
+
 type JobInfo struct {
 	JobId      string `json:"job_id"`
 	JobType    string `json:"job_type"`

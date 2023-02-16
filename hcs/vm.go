@@ -425,6 +425,11 @@ func ExecJob(domain, tenantId, token, jobId string) error {
 				return errors.New(jobRes.FailReason)
 			}
 		}
+		if jobRes.JobId == "" {
+			var jobErr model.JobErr
+			utils.FromJSON(dataStr, &jobErr)
+			return errors.New(jobErr.ErrorMsg)
+		}
 	}
 }
 
@@ -453,6 +458,11 @@ func ExecCreateJob(domain, tenantId, token, jobId string) (interface{}, error) {
 			} else {
 				return nil, errors.New(jobRes.FailReason)
 			}
+		}
+		if jobRes.JobId == "" {
+			var jobErr model.JobErr
+			utils.FromJSON(dataStr, &jobErr)
+			return nil, errors.New(jobErr.ErrorMsg)
 		}
 	}
 }
