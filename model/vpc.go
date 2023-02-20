@@ -143,7 +143,7 @@ type UpdateSubnet struct {
 	DhcpEnable          bool     `json:"dhcp_enable,omitempty"`   //是否使能DHCP。
 	PrimaryDns          string   `json:"primary_dns,omitempty"`   //子网DNS服务器地址，IP格式
 	SecondaryDns        string   `json:"secondary_dns,omitempty"` //子网DNS服务器地址，IP格式。
-	DnsList             []string `json:"dnsList,omitempty"`       //子网DNS服务器地址列表。
+	DnsList             []string `json:"dnsList"`                 //子网DNS服务器地址列表。
 	NtpList             []string `json:"ntpList,omitempty"`       //子网NTP服务器地址列表。
 	Routed              bool     `json:"routed,omitempty"`        //指示是否是VPC路由网络
 	Ipv6Enable          bool     `json:"ipv6_enable,omitempty"`   //是否使能IPv6。
