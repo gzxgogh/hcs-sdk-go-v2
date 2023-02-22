@@ -541,6 +541,7 @@ type UpdatePortsParams struct {
 type UpdatePorts struct {
 	Name              string              `json:"name,omitempty"`
 	Description       string              `json:"description,omitempty"`
+	QosPolicyId       string              `json:"qos_policy_id,omitempty"`
 	AllowAddressPairs []AllowAddressPairs `json:"allow_address_pairs,omitempty"`
 	ExtraDhcpOpts     []ExtraDhcpOpts     `json:"extra_dhcp_opts,omitempty"`
 }
