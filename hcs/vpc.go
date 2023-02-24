@@ -261,7 +261,7 @@ func CreateQosPolicy(params model.CreateQosPolicyRequest) models.Result[any] {
 
 func DeleteQosPolicy(params model.DeleteQosPolicyRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/qos/policies/%s`, params.Domain, params.PolicyId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -314,6 +314,20 @@ func QueryQosPolicy(params model.QueryQosPolicyRequest) models.Result[any] {
 
 		return models.Success[any](obj)
 	}
+}
+
+func CreateQosPolicyRule(params model.CreateQosPolicyRuleRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/qos/policies/%s/bandwidth_limit_rules`, params.Domain, params.PolicyId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryQosPolicyResponse
+	utils.FromJSON(utils.ToJSON(res["policy"]), &obj)
+
+	return models.Success[any](obj)
 }
 
 // todo	端口限速规则
@@ -382,6 +396,19 @@ func QueryPublicNet(params model.QueryPublicNetRequest) models.Result[any] {
 	utils.FromJSON(utils.ToJSON(res["networks"]), &list)
 
 	return models.Success[any](list)
+}
+
+func GetIpCapacity(params model.GetIpCapacityRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/network-ip-availabilities/%s`, params.Domain, params.PublicNetId)
+	dataStr, err := request.Get(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var result model.GetIpCapacityResponse
+	utils.FromJSON(utils.ToJSON(res["network_ip_availability"]), &result)
+	return models.Success[any](result)
 }
 
 // 对等连接

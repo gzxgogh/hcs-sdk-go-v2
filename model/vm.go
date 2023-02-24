@@ -26,7 +26,7 @@ type CreateVm struct {
 	KeyName          string           `json:"key_name,omitempty"`  //如果需要使用SSH密钥方式登录 云服务器，请指定已创建密钥的 名称。约束：当key_name与 user_data同时指定时，user_data只做用户数据注入。
 	VpcId            string           `json:"vpcid"`               //待创建云服务器所属虚拟私有云（简称VPC），需要指定已创建VPC的ID，UUID格式。
 	Nics             []Nic            `json:"nics"`
-	PublicIp         PublicIp         `json:"publicip,omitempty"`           //配置云服务器的弹性IP信息， TYPE3场景不支持，弹性IP有三 种配置方式。 不使用（无该字 段）。 自动分配，需要指定新 创建弹性IP的信息。 使用已 有，需要指定已创建弹性IP的信 息。
+	PublicIp         *PublicIp        `json:"publicip,omitempty"`           //配置云服务器的弹性IP信息， TYPE3场景不支持，弹性IP有三 种配置方式。 不使用（无该字 段）。 自动分配，需要指定新 创建弹性IP的信息。 使用已 有，需要指定已创建弹性IP的信 息。
 	Count            int              `json:"count,omitempty"`              //创建数量最大1000
 	IsAutoRename     bool             `json:"isAutoRename,omitempty"`       //是否允许重名
 	RootVolume       RootVolume       `json:"root_volume"`                  //系统盘信息

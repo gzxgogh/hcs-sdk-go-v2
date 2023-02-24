@@ -309,6 +309,24 @@ type QueryQosPolicyResponse struct {
 	} `json:"rules"`
 }
 
+type CreateQosPolicyRuleRequest struct {
+	Domain   string                    `json:"domain"`
+	Token    string                    `json:"token"`
+	TenantId string                    `json:"tenantId"`
+	PolicyId string                    `json:"policyId"`
+	Params   CreateQosPolicyRuleParams `json:"params"`
+}
+
+type CreateQosPolicyRuleParams struct {
+	CreateQosPolicyRule CreateQosPolicyRule `json:"fip_bandwidth_limit_rule"`
+}
+
+type CreateQosPolicyRule struct {
+	MaxKbps      int    `json:"max_kbps"`
+	MaxBurstKbps string `json:"max_burst_kbps,omitempty"`
+	ShareType    string `json:"share_type,omitempty"`
+}
+
 type QueryPolicyBandwidthRuleRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`
@@ -337,6 +355,29 @@ type QueryPublicNetRequest struct {
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
 	Id       string `json:"id"`
+}
+
+type GetIpCapacityRequest struct {
+	Domain      string `json:"domain"`
+	Token       string `json:"token"`
+	TenantId    string `json:"tenantId"`
+	PublicNetId string `json:"publicNetId"`
+}
+
+type GetIpCapacityResponse struct {
+	NetworkId            string `json:"network_id"`
+	NetworkName          string `json:"network_name"`
+	TenantId             string `json:"tenant_id"`
+	SubnetIpAvailability []struct {
+		SubnetId   string `json:"subnet_id"`
+		IpVersion  int    `json:"ip_version"`
+		Cidr       string `json:"cidr"`
+		SubnetName string `json:"subnet_name"`
+		UsedIps    int    `json:"used_ips"`
+		TotalIps   int    `json:"total_ips"`
+	} `json:"subnet_ip_availability"`
+	UsedIps  int `json:"used_ips"`
+	TotalIps int `json:"total_ips"`
 }
 
 type QueryPublicNetResponse struct {
