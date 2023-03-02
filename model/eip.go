@@ -123,6 +123,24 @@ type QueryEipResponse struct {
 	CreatedAt string `json:"created_at"`
 }
 
+type UpdateBandwidthRequest struct {
+	Domain      string                `json:"domain"`
+	Token       string                `json:"token"`
+	TenantId    string                `json:"tenantId"`
+	BandwidthId string                `json:"bandwidthId"`
+	Params      UpdateBandwidthParams `json:"params"`
+}
+
+type UpdateBandwidthParams struct {
+	UpdateBandwidth UpdateBandwidth `json:"bandwidth"`
+}
+
+type UpdateBandwidth struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Size        int    `json:"size,omitempty"`
+}
+
 type CreateShareBandwidthRequest struct {
 	Domain   string                     `json:"domain"`
 	Token    string                     `json:"token"`

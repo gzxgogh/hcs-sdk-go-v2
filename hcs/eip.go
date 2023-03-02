@@ -91,6 +91,19 @@ func QueryEip(params model.QueryEipRequest) models.Result[any] {
 
 }
 
+func UpdateBandwidth(params model.UpdateBandwidthRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths/%s`, params.Domain, params.TenantId, params.BandwidthId)
+	dataStr, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.CreateShareBandwidthResponse
+	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
+	return models.Success[any](obj)
+}
+
 func CreateShareBandwidth(params model.CreateShareBandwidthRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths`, params.Domain, params.TenantId)
 	dataStr, err := request.Post(url, params.Token, params.Params)
