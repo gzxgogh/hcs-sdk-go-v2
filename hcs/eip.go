@@ -99,7 +99,7 @@ func UpdateBandwidth(params model.UpdateBandwidthRequest) models.Result[any] {
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var obj model.CreateShareBandwidthResponse
+	var obj model.QueryShareBandwidthResponse
 	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 	return models.Success[any](obj)
 }
@@ -112,7 +112,7 @@ func CreateShareBandwidth(params model.CreateShareBandwidthRequest) models.Resul
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var obj model.CreateShareBandwidthResponse
+	var obj model.QueryShareBandwidthResponse
 	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 	return models.Success[any](obj)
 }
@@ -134,21 +134,21 @@ func UpdateShareBandwidth(params model.UpdateShareBandwidthRequest) models.Resul
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var obj model.CreateShareBandwidthResponse
+	var obj model.QueryShareBandwidthResponse
 	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 	return models.Success[any](obj)
 }
 
 func QueryShareBandwidth(params model.QueryShareBandwidthRequest) models.Result[any] {
 	if params.Id == "" {
-		url := fmt.Sprintf(`%s/v1/%s/bandwidths`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v1/%s/bandwidths?share_type=WHOLE`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
 		res := make(map[string]interface{})
 		utils.FromJSON(dataStr, &res)
-		var list []model.QueryEipResponse
+		var list []model.QueryShareBandwidthResponse
 		utils.FromJSON(utils.ToJSON(res["bandwidths"]), &list)
 		return models.Success[any](list)
 	} else {
@@ -163,11 +163,10 @@ func QueryShareBandwidth(params model.QueryShareBandwidthRequest) models.Result[
 		if res["code"] != nil {
 			return models.Error(-1, fmt.Sprintf(`QoS policy %s could not be found.`, params.Id))
 		}
-		var obj model.QueryEipResponse
+		var obj model.QueryShareBandwidthResponse
 		utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 		return models.Success[any](obj)
 	}
-
 }
 
 func ShareBandwidthAttachEip(params model.ShareBandwidthAttachEipRequest) models.Result[any] {
@@ -178,7 +177,7 @@ func ShareBandwidthAttachEip(params model.ShareBandwidthAttachEipRequest) models
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var obj model.ShareBandwidthAttachEipResponse
+	var obj model.QueryShareBandwidthResponse
 	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 	return models.Success[any](obj)
 }
@@ -191,7 +190,7 @@ func ShareBandwidthDetachEip(params model.ShareBandwidthDetachEipRequest) models
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var obj model.ShareBandwidthAttachEipResponse
+	var obj model.QueryShareBandwidthResponse
 	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 	return models.Success[any](obj)
 }

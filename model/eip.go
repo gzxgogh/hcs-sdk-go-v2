@@ -156,18 +156,6 @@ type ShareBandwidth struct {
 	Name string `json:"name"`
 	Size int    `json:"size"`
 }
-type CreateShareBandwidthResponse struct {
-	Id            string `json:"id"`
-	Name          string `json:"name"`
-	Size          int    `json:"size"`
-	Description   string `json:"description"`
-	ShareType     string `json:"share_type"`
-	TenantId      string `json:"tenant_id"`
-	BandwidthType string `json:"bandwidth_type"`
-	Shared        bool   `json:"shared"`
-	RuleType      string `json:"rule_type"`
-	Status        string `json:"status"`
-}
 
 type DeleteShareBandwidthRequest struct {
 	Domain   string `json:"domain"`
@@ -201,6 +189,25 @@ type QueryShareBandwidthRequest struct {
 	Id       string `json:"id,omitempty"`
 }
 
+type QueryShareBandwidthResponse struct {
+	Id           string `json:"id"`
+	Name         string `json:"name"`
+	Size         int    `json:"size"`
+	Description  string `json:"description"`
+	ShareType    string `json:"share_type"`
+	TenantId     string `json:"tenant_id"`
+	PublicipInfo []struct {
+		PublicipId      string `json:"publicip_id"`
+		PublicipAddress string `json:"publicip_address"`
+		IpVersion       int    `json:"ip_version"`
+		PublicipType    string `json:"publicip_type"`
+	} `json:"publicip_info"`
+	BandwidthType string `json:"bandwidth_type"`
+	Shared        bool   `json:"shared"`
+	RuleType      string `json:"rule_type"`
+	Status        string `json:"status"`
+}
+
 type ShareBandwidthAttachEipRequest struct {
 	Domain      string                        `json:"domain"`
 	Token       string                        `json:"token"`
@@ -219,24 +226,6 @@ type ShareBandwidthAttachEip struct {
 }
 type PublicIpInfo []struct {
 	PublicIpId string `json:"publicip_id"`
-}
-
-type ShareBandwidthAttachEipResponse struct {
-	Id           string `json:"id"`
-	Name         string `json:"name"`
-	Size         int    `json:"size"`
-	Description  string `json:"description"`
-	ShareType    string `json:"share_type"`
-	PublicipInfo []struct {
-		PublicipId      string `json:"publicip_id"`
-		PublicipAddress string `json:"publicip_address"`
-		IpVersion       int    `json:"ip_version"`
-		PublicipType    string `json:"publicip_type"`
-	} `json:"publicip_info"`
-	TenantId string `json:"tenant_id"`
-	Shared   bool   `json:"shared"`
-	RuleType string `json:"rule_type"`
-	Status   string `json:"status"`
 }
 
 type ShareBandwidthDetachEipRequest struct {
