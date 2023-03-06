@@ -228,11 +228,6 @@ type QueryVmResponse struct {
 	Architecture                     interface{}                      `json:"architecture"`
 }
 
-type ItemNotFound struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
 type VmMetadata struct {
 	ImageName                 string `json:"image_name"`
 	MeteringResourcespeccode  string `json:"metering.resourcespeccode"`

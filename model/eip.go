@@ -215,6 +215,7 @@ type ShareBandwidthAttachEipParams struct {
 
 type ShareBandwidthAttachEip struct {
 	Bandwidth PublicIpInfo `json:"publicip_info"`
+	Size      int          `json:"size"`
 }
 type PublicIpInfo []struct {
 	PublicIpId string `json:"publicip_id"`
@@ -253,4 +254,68 @@ type ShareBandwidthDetachEipParams struct {
 type ShareBandwidthDetachEip struct {
 	Bandwidth PublicIpInfo `json:"publicip_info"`
 	Size      int          `json:"size"`
+}
+
+type CreateFipRequest struct {
+	Domain   string          `json:"domain"`
+	Token    string          `json:"token"`
+	TenantId string          `json:"tenantId"`
+	Params   CreateFipParams `json:"params"`
+}
+
+type CreateFipParams struct {
+	CreateFip CreateFip `json:"floatingip_create_dict"`
+}
+
+type CreateFip struct {
+	FloatingNetworkId string `json:"floating_network_id"`
+	FixedIpAddress    string `json:"fixed_ip_address,omitempty"`
+	FloatingIpAddress string `json:"floating_ip_address,omitempty"`
+	SubnetId          string `json:"subnet_id,omitempty"`
+	PortId            string `json:"port_id,omitempty"`
+}
+
+type DeleteFipRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	Id       string `json:"id"`
+}
+
+type UpdateFipRequest struct {
+	Domain   string          `json:"domain"`
+	Token    string          `json:"token"`
+	TenantId string          `json:"tenantId"`
+	Id       string          `json:"id"`
+	Params   UpdateFipParams `json:"params"`
+}
+
+type UpdateFipParams struct {
+	UpdateFip UpdateFip `json:"floatingip_update_dict"`
+}
+
+type UpdateFip struct {
+	FixedIpAddress string `json:"fixed_ip_address,omitempty"`
+	PortId         string `json:"port_id,omitempty"`
+}
+
+type QueryFipRequest struct {
+	Domain   string `json:"domain"`
+	Token    string `json:"token"`
+	TenantId string `json:"tenantId"`
+	Id       string `json:"id"`
+}
+
+type QueryFipResponse struct {
+	Id                string `json:"id"`
+	Status            string `json:"status"`
+	RouterId          string `json:"router_id"`
+	TenantId          string `json:"tenant_id"`
+	FloatingNetworkId string `json:"floating_network_id"`
+	FixedIpAddress    string `json:"fixed_ip_address"`
+	QosPolicyId       string `json:"qos_policy_id"`
+	FloatingIpAddress string `json:"floating_ip_address"`
+	PortId            string `json:"port_id"`
+	CreatedAt         string `json:"created_at"`
+	UpdatedAt         string `json:"updated_at"`
 }

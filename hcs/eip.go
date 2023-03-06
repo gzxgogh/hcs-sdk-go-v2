@@ -195,3 +195,71 @@ func ShareBandwidthDetachEip(params model.ShareBandwidthDetachEipRequest) models
 	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 	return models.Success[any](obj)
 }
+
+func CreateFip(params model.CreateFipRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/floatingips`, params.Domain)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryFipResponse
+	utils.FromJSON(utils.ToJSON(res["floatingip"]), &obj)
+	return models.Success[any](obj)
+}
+
+func DeleteFip(params model.DeleteFipRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/floatingips/%s`, params.Domain, params.Id)
+	_, err := request.Delete(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	return models.Success[any](nil)
+}
+
+func UpdateFip(params model.UpdateFipRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/floatingips/%s`, params.Domain, params.Id)
+	dataStr, err := request.Put(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryFipResponse
+	utils.FromJSON(utils.ToJSON(res["floatingip"]), &obj)
+	return models.Success[any](obj)
+}
+
+func QueryFip(params model.QueryFipRequest) models.Result[any] {
+	if params.Id == "" {
+		url := fmt.Sprintf(`%s/v2.0/floatingips`, params.Domain)
+		dataStr, err := request.Get(url, params.Token, params)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var list []model.QueryFipResponse
+		utils.FromJSON(utils.ToJSON(res["floatingips"]), &list)
+		return models.Success[any](list)
+	} else {
+		url := fmt.Sprintf(`%s/v2.0/floatingips/%s`, params.Domain, params.Id)
+		dataStr, err := request.Get(url, params.Token, nil)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		if res["NeutronError"] != nil {
+			var errObj model.ItemNotFound
+			utils.FromJSON(utils.ToJSON(res["NeutronError"]), &errObj)
+			return models.Error(-1, errObj.Message)
+		}
+		var obj model.QueryFipResponse
+		utils.FromJSON(utils.ToJSON(res["floatingip"]), &obj)
+		return models.Success[any](obj)
+	}
+
+}

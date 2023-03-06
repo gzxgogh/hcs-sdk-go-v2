@@ -705,7 +705,7 @@ func UpdateNatGateways(params model.UpdateNatGatewaysRequest) models.Result[any]
 
 func QueryNatGateways(params model.QueryNatGatewaysRequest) models.Result[any] {
 	if params.NatGatewayId == "" {
-		url := fmt.Sprintf(`%s/v2.0/nat_gateways`, params.Domain)
+		url := fmt.Sprintf(`%s/v2.0/%s/nat_gateways`, params.Domain, params.TenantId)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())

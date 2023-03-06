@@ -1,10 +1,5 @@
 package model
 
-type NeutronError struct {
-	Message string `json:"message"`
-	Detail  string `json:"detail"`
-}
-
 type CreateSgRequest struct {
 	Domain   string         `json:"domain"`
 	Token    string         `json:"token"`
