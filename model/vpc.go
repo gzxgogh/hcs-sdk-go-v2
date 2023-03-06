@@ -199,8 +199,9 @@ type CreatePrivateIpParams struct {
 }
 
 type CreatePrivateIp []struct {
-	SubnetId  string `json:"subnet_id"`
-	IpAddress string `json:"ip_address,omitempty"`
+	SubnetId    string `json:"subnet_id"`
+	IpAddress   string `json:"ip_address,omitempty"`
+	DeviceOwner string `json:"device_owner,omitempty"` //不填表示普通ip,neutron:VIP_PORT表示创建虚拟ip
 }
 
 type DeletePrivateIpRequest struct {
@@ -215,7 +216,7 @@ type QueryPrivateIpRequest struct {
 	Token       string `json:"token"`
 	TenantId    string `json:"tenantId"`
 	SubnetId    string `json:"subnetId"`
-	PrivateIpId string `json:"privateIpId"`
+	PrivateIpId string `json:"privateIpId,omitempty"`
 }
 
 type QueryPrivateIpResponse struct {
@@ -232,6 +233,7 @@ type QueryVipRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
+	Id       string `json:"id,omitempty"`
 }
 
 type BandVipRequest struct {

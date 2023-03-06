@@ -162,7 +162,7 @@ func CreatePrivateIp(params model.CreatePrivateIpRequest) models.Result[any] {
 	}
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
-	var list []model.QuerySubnetResponse
+	var list []model.QueryPrivateIpResponse
 	utils.FromJSON(utils.ToJSON(res["privateips"]), &list)
 
 	return models.Success[any](list)
@@ -211,17 +211,32 @@ func QueryPrivateIp(params model.QueryPrivateIpRequest) models.Result[any] {
 
 // 虚拟ip
 func QueryVip(params model.QueryVipRequest) models.Result[any] {
-	url := fmt.Sprintf(`%s/v2.0/ports?device_owner=neutron:VIP_PORT`, params.Domain)
-	dataStr, err := request.Get(url, params.Token, nil)
-	if err != nil {
-		return models.Error(-1, err.Error())
-	}
-	res := make(map[string]interface{})
-	utils.FromJSON(dataStr, &res)
-	var list []model.QueryPortsResponse
-	utils.FromJSON(utils.ToJSON(res["ports"]), &list)
+	if params.Id == "" {
+		url := fmt.Sprintf(`%s/v2.0/ports?device_owner=neutron:VIP_PORT`, params.Domain)
+		dataStr, err := request.Get(url, params.Token, nil)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var list []model.QueryPrivateIpResponse
+		utils.FromJSON(utils.ToJSON(res["ports"]), &list)
 
-	return models.Success[any](list)
+		return models.Success[any](list)
+	} else {
+		url := fmt.Sprintf(`%s/v2.0/ports/%s`, params.Domain, params.Id)
+		dataStr, err := request.Get(url, params.Token, nil)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		obj := model.QueryPrivateIpResponse{}
+		utils.FromJSON(utils.ToJSON(res["port"]), &obj)
+
+		return models.Success[any](obj)
+	}
+
 }
 
 func BandVip(params model.BandVipRequest) models.Result[any] {

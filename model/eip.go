@@ -253,7 +253,7 @@ type CreateFipRequest struct {
 }
 
 type CreateFipParams struct {
-	CreateFip CreateFip `json:"floatingip_create_dict"`
+	CreateFip CreateFip `json:"floatingip"`
 }
 
 type CreateFip struct {
@@ -280,7 +280,7 @@ type UpdateFipRequest struct {
 }
 
 type UpdateFipParams struct {
-	UpdateFip UpdateFip `json:"floatingip_update_dict"`
+	UpdateFip UpdateFip `json:"floatingip"`
 }
 
 type UpdateFip struct {
