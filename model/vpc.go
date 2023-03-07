@@ -236,24 +236,59 @@ type QueryVipRequest struct {
 	Id       string `json:"id,omitempty"`
 }
 
-type BandVipRequest struct {
-	Domain      string    `json:"domain"`
-	Token       string    `json:"token"`
-	TenantId    string    `json:"tenantId"`
-	PrivateIpId string    `json:"privateIpId"`
-	Params      VipParams `json:"params"`
+type QueryVipResponse struct {
+	TenantId            string `json:"tenant_id"`
+	PortSecurityEnabled bool   `json:"port_security_enabled"`
+	BindingVifType      string `json:"binding:vif_type"`
+	AliasId             string `json:"alias_id"`
+	AllowedAddressPairs []struct {
+		MacAddress string `json:"mac_address"`
+		IpAddress  string `json:"ip_address"`
+	} `json:"allowed_address_pairs"`
+	Description       string                 `json:"description"`
+	ExtraDhcpOpts     []string               `json:"extra_dhcp_opts"`
+	BindingVnicType   string                 `json:"binding:vnic_type"`
+	CreatedAt         string                 `json:"created_at"`
+	BindingHostId     string                 `json:"binding:host_id"`
+	UpdatedAt         string                 `json:"updated_at"`
+	ProjectId         string                 `json:"project_id"`
+	MacAddress        string                 `json:"mac_address"`
+	AdminStateUp      bool                   `json:"admin_state_up"`
+	Id                string                 `json:"id"`
+	BindingVifDetails map[string]interface{} `json:"binding:vif_details"`
+	DeviceId          string                 `json:"device_id"`
+	BindingProfile    map[string]interface{} `json:"binding:profile"`
+	DeviceOwner       string                 `json:"device_owner"`
+	Tags              []string               `json:"tags"`
+	SecurityGroups    []string               `json:"security_groups"`
+	NetworkId         string                 `json:"network_id"`
+	FixedIps          []struct {
+		SubnetId  string `json:"subnet_id"`
+		IpAddress string `json:"ip_address"`
+	} `json:"fixed_ips"`
+	Name        string `json:"name"`
+	QosPolicyId string `json:"qos_policy_id"`
+	Status      string `json:"status"`
 }
 
-type VipParams struct {
+type BandPortRequest struct {
+	Domain      string           `json:"domain"`
+	Token       string           `json:"token"`
+	TenantId    string           `json:"tenantId"`
+	PrivateIpId string           `json:"privateIpId"`
+	Params      ActionPortParams `json:"params"`
+}
+
+type ActionPortParams struct {
 	PortId string `json:"id"` //端口id
 }
 
-type UnBandVipRequest struct {
-	Domain      string    `json:"domain"`
-	Token       string    `json:"token"`
-	TenantId    string    `json:"tenantId"`
-	PrivateIpId string    `json:"privateIpId"`
-	Params      VipParams `json:"params"`
+type UnBandPortRequest struct {
+	Domain      string           `json:"domain"`
+	Token       string           `json:"token"`
+	TenantId    string           `json:"tenantId"`
+	PrivateIpId string           `json:"privateIpId"`
+	Params      ActionPortParams `json:"params"`
 }
 
 type CreateQosPolicyRequest struct {
@@ -272,6 +307,7 @@ type QosPolicy struct {
 	Description string `json:"description,omitempty"`
 	Shared      bool   `json:"shared,omitempty"`
 	TenantId    string `json:"tenant_id,omitempty"`
+	QosType     string `json:"qos_type"`
 }
 
 type DeleteQosPolicyRequest struct {
@@ -293,7 +329,9 @@ type QueryQosPolicyRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`
 	TenantId string `json:"tenantId"`
-	Id       string `json:"id"`
+	Id       string `json:"id,omitempty"`
+	Name     string `json:"name,omitempty"`
+	RuleType string `json:"rule_type,omitempty"` //查询端口qos策略:bandwidth_limit
 }
 
 type QueryQosPolicyResponse struct {

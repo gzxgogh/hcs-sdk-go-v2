@@ -219,7 +219,7 @@ func QueryVip(params model.QueryVipRequest) models.Result[any] {
 		}
 		res := make(map[string]interface{})
 		utils.FromJSON(dataStr, &res)
-		var list []model.QueryPrivateIpResponse
+		var list []model.QueryVipResponse
 		utils.FromJSON(utils.ToJSON(res["ports"]), &list)
 
 		return models.Success[any](list)
@@ -231,7 +231,7 @@ func QueryVip(params model.QueryVipRequest) models.Result[any] {
 		}
 		res := make(map[string]interface{})
 		utils.FromJSON(dataStr, &res)
-		obj := model.QueryPrivateIpResponse{}
+		obj := model.QueryVipResponse{}
 		utils.FromJSON(utils.ToJSON(res["port"]), &obj)
 
 		return models.Success[any](obj)
@@ -239,7 +239,7 @@ func QueryVip(params model.QueryVipRequest) models.Result[any] {
 
 }
 
-func BandVip(params model.BandVipRequest) models.Result[any] {
+func BandPort(params model.BandPortRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/vport/%s`, params.Domain, params.TenantId, params.PrivateIpId)
 	_, err := request.Put(url, params.Token, params.Params)
 	if err != nil {
@@ -249,7 +249,7 @@ func BandVip(params model.BandVipRequest) models.Result[any] {
 	return models.Success[any](nil)
 }
 
-func UnBandVip(params model.UnBandVipRequest) models.Result[any] {
+func UnBandPort(params model.UnBandPortRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/vport/%s`, params.Domain, params.TenantId, params.PrivateIpId)
 	_, err := request.Delete(url, params.Token, params.Params)
 	if err != nil {
@@ -271,6 +271,20 @@ func CreateQosPolicy(params model.CreateQosPolicyRequest) models.Result[any] {
 	var obj model.QueryQosPolicyResponse
 	utils.FromJSON(utils.ToJSON(res["policy"]), &obj)
 
+	return models.Success[any](obj)
+}
+
+// 创建端口qos
+func CreateQos(params model.CreateShareBandwidthRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths?qos_type=port_qos`, params.Domain, params.TenantId)
+	dataStr, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+	res := make(map[string]interface{})
+	utils.FromJSON(dataStr, &res)
+	var obj model.QueryShareBandwidthResponse
+	utils.FromJSON(utils.ToJSON(res["bandwidth"]), &obj)
 	return models.Success[any](obj)
 }
 
@@ -301,7 +315,7 @@ func UpdateQosPolicy(params model.UpdateQosPolicyRequest) models.Result[any] {
 func QueryQosPolicy(params model.QueryQosPolicyRequest) models.Result[any] {
 	if params.Id == "" {
 		url := fmt.Sprintf(`%s/v2.0/qos/policies`, params.Domain)
-		dataStr, err := request.Get(url, params.Token, nil)
+		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
