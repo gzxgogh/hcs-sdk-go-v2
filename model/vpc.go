@@ -714,7 +714,7 @@ type CreateNatGatewaysRequest struct {
 }
 
 type CreateNatGatewaysParams struct {
-	CreateNatGateways CreateNatGateways `json:"nat_gateways"`
+	CreateNatGateways CreateNatGateways `json:"nat_gateway"`
 }
 
 type CreateNatGateways struct {
@@ -743,7 +743,7 @@ type UpdateNatGatewaysRequest struct {
 }
 
 type UpdateNatGatewaysParams struct {
-	UpdateNatGateways UpdateNatGateways `json:"nat_gateways"`
+	UpdateNatGateways UpdateNatGateways `json:"nat_gateway"`
 }
 
 type UpdateNatGateways struct {
@@ -791,8 +791,7 @@ type CreateSNatRulesParams struct {
 
 type CreateSNatRules struct {
 	NatGatewayId string `json:"nat_gateway_id"`
-	NetworkId    string `json:"network_id"`
-	SourceType   string `json:"source_type"`
+	NetworkId    string `json:"network_id,omitempty"`
 	FloatingIpId string `json:"floating_ip_id"`
 	Cidr         string `json:"cidr,omitempty"`
 }
@@ -829,7 +828,7 @@ type QuerySNatRulesResponse struct {
 	Status            string `json:"status"`
 	AdminStateUp      bool   `json:"admin_state_up"`
 	Cidr              string `json:"cidr"`
-	SourceType        int    `json:"source_type"`
+	SourceType        string `json:"source_type"`
 	CreatedAt         string `json:"created_at"`
 }
 

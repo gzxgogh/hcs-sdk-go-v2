@@ -693,7 +693,6 @@ func QueryRoutes(params model.QueryRoutesRequest) models.Result[any] {
 }
 
 // NAT网关
-// todo the API does not exist or has not been published in the environment
 func CreateNatGateways(params model.CreateNatGatewaysRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/nat_gateways`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -734,7 +733,7 @@ func UpdateNatGateways(params model.UpdateNatGatewaysRequest) models.Result[any]
 
 func QueryNatGateways(params model.QueryNatGatewaysRequest) models.Result[any] {
 	if params.NatGatewayId == "" {
-		url := fmt.Sprintf(`%s/v2.0/%s/nat_gateways`, params.Domain, params.TenantId)
+		url := fmt.Sprintf(`%s/v2.0/nat_gateways`, params.Domain)
 		dataStr, err := request.Get(url, params.Token, params)
 		if err != nil {
 			return models.Error(-1, err.Error())
@@ -758,7 +757,6 @@ func QueryNatGateways(params model.QueryNatGatewaysRequest) models.Result[any] {
 	}
 }
 
-// SNAT规则	the API does not exist or has not been published in the environment
 func CreateSNatRule(params model.CreateSNatRulesRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/snat_rules`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -796,8 +794,8 @@ func QuerySNatRules(params model.QuerySNatRulesRequest) models.Result[any] {
 		utils.FromJSON(utils.ToJSON(res["snat_rules"]), &finalList)
 		return models.Success[any](finalList)
 	} else {
-		url := fmt.Sprintf(`%s/v2.0/snat_rules/%s`, params.Domain, params.NatGatewayId)
-		dataStr, err := request.Get(url, params.Token, params)
+		url := fmt.Sprintf(`%s/v2.0/snat_rules/%s`, params.Domain, params.SNatRuleId)
+		dataStr, err := request.Get(url, params.Token, nil)
 		if err != nil {
 			return models.Error(-1, err.Error())
 		}
@@ -809,7 +807,6 @@ func QuerySNatRules(params model.QuerySNatRulesRequest) models.Result[any] {
 	}
 }
 
-// DNAT规则	the API does not exist or has not been published in the environment
 func CreateDNatRule(params model.CreateDNatRuleRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/dnat_rules`, params.Domain)
 	dataStr, err := request.Post(url, params.Token, params.Params)
@@ -819,14 +816,14 @@ func CreateDNatRule(params model.CreateDNatRuleRequest) models.Result[any] {
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
 	var obj model.QueryDNatRulesResponse
-	utils.FromJSON(utils.ToJSON(res["nat_gateway"]), &obj)
+	utils.FromJSON(utils.ToJSON(res["dnat_rule"]), &obj)
 
 	return models.Success[any](obj)
 }
 
 func DeleteDNatRule(params model.DeleteDNatRuleRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/dnat_rules/%s`, params.Domain, params.DNatRuleId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -843,7 +840,7 @@ func UpdateDNatRule(params model.UpdateDNatRuleRequest) models.Result[any] {
 	res := make(map[string]interface{})
 	utils.FromJSON(dataStr, &res)
 	var obj model.QueryDNatRulesResponse
-	utils.FromJSON(utils.ToJSON(res["nat_gateway"]), &obj)
+	utils.FromJSON(utils.ToJSON(res["dnat_rule"]), &obj)
 
 	return models.Success[any](obj)
 }
