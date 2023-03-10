@@ -538,7 +538,7 @@ type ActionPeerRouterRequest struct {
 	Domain   string                 `json:"domain"`
 	Token    string                 `json:"token"`
 	TenantId string                 `json:"tenantId"`
-	VpcId    string                 `json:"vpcId"`
+	VpcId    string                 `json:"vpc_id"`
 	Params   ActionPeerRouterParams `json:"params"`
 }
 
