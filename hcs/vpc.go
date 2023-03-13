@@ -773,7 +773,7 @@ func CreateSNatRule(params model.CreateSNatRulesRequest) models.Result[any] {
 
 func DeleteSNatRules(params model.DeleteSNatRulesRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/snat_rules/%s`, params.Domain, params.SNatRuleId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
