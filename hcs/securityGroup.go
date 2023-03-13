@@ -23,7 +23,7 @@ func CreateSg(params model.CreateSgRequest) models.Result[any] {
 
 func DeleteSg(params model.DeleteSgRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/security-groups/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -90,7 +90,7 @@ func CreateSgRule(params model.CreateSgRuleRequest) models.Result[any] {
 
 func DeleteSgRule(params model.DeleteSgRuleRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/security-group-rules/%s`, params.Domain, params.TenantId, params.RuleId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

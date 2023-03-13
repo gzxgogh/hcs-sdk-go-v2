@@ -24,7 +24,7 @@ func CreateLoadBalancer(params model.CreateLoadBalancersRequest) models.Result[a
 
 func DeleteLoadBalancer(params model.DeleteLoadBalancersRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/lbaas/loadbalancers/%s`, params.Domain, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

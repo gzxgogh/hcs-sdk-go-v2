@@ -61,7 +61,7 @@ func QuerySpec(params model.QuerySpecRequest) models.Result[any] {
 
 func DeleteSpec(params model.DeleteSpecRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.1/%s/flavors/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

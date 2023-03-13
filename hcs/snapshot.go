@@ -98,7 +98,7 @@ func RevertVolumeSnapshot(params model.RevertVolumeSnapshotRequest) models.Resul
 
 func DeleteVolumeSnapshot(params model.DeleteVolumeSnapshotRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2/%s/snapshots/%s`, params.Domain, params.TenantId, params.SnapshotId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

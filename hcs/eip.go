@@ -37,7 +37,7 @@ func CreateEip(params model.CreateEipRequest) models.Result[any] {
 
 func DeleteEip(params model.DeleteEipRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/publicips/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -119,7 +119,7 @@ func CreateShareBandwidth(params model.CreateShareBandwidthRequest) models.Resul
 
 func DeleteShareBandwidth(params model.DeleteShareBandwidthRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/%s/bandwidths/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -210,7 +210,7 @@ func CreateFip(params model.CreateFipRequest) models.Result[any] {
 
 func DeleteFip(params model.DeleteFipRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/floatingips/%s`, params.Domain, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

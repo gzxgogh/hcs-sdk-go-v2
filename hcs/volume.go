@@ -38,7 +38,7 @@ func CreateVolume(params model.CreateVolumeRequest) models.Result[any] {
 
 func DeleteVolume(params model.DeleteVolumeRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2/%s/volumes/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

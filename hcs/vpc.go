@@ -25,7 +25,7 @@ func CreateVpc(params model.CreateVpcRequest) models.Result[any] {
 
 func DeleteVpc(params model.DeleteVpcRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/vpcs/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -95,7 +95,7 @@ func CreateSubnet(params model.CreateSubnetRequest) models.Result[any] {
 
 func DeleteSubnet(params model.DeleteSubnetRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/subnets/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -170,7 +170,7 @@ func CreatePrivateIp(params model.CreatePrivateIpRequest) models.Result[any] {
 
 func DeletePrivateIp(params model.DeletePrivateIpRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/privateips/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -457,7 +457,7 @@ func CreatePeer(params model.CreatePeerRequest) models.Result[any] {
 
 func DeletePeer(params model.DeletePeerRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/vpcpeering/%s`, params.Domain, params.TenantId, params.Id)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -593,7 +593,7 @@ func CreatePorts(params model.CreatePortsRequest) models.Result[any] {
 
 func DeletePorts(params model.DeletePortsRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/ports/%s`, params.Domain, params.TenantId, params.PortId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -659,7 +659,7 @@ func CreateRoutes(params model.CreateRoutesRequest) models.Result[any] {
 
 func DeleteRoutes(params model.DeleteRoutesRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/vpc/routes/%s`, params.Domain, params.RouteId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -709,7 +709,7 @@ func CreateNatGateways(params model.CreateNatGatewaysRequest) models.Result[any]
 
 func DeleteNatGateways(params model.DeleteNatGatewaysRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2.0/nat_gateways/%s`, params.Domain, params.NatGatewayId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
