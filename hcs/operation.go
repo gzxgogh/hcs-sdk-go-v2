@@ -32,6 +32,9 @@ func GetIndicator(params model.GetIndicatorRequest) models.Result[any] {
 
 func GetCloudVm(params model.GetInstanceRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_VM?pageNo=%d&pageSize=%d`, params.Domain, params.PageNo, params.PageSize)
+	if params.NativeId != "" {
+		url = fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_VM?condition={"constraint":[{"simple":{"name":"nativeId","value":"%s","operator":"equal"}}]}`, params.Domain, params.NativeId)
+	}
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -46,6 +49,9 @@ func GetCloudVm(params model.GetInstanceRequest) models.Result[any] {
 
 func GetCloudVolume(params model.GetInstanceRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_VOLUME?pageNo=%d&pageSize=%d`, params.Domain, params.PageNo, params.PageSize)
+	if params.NativeId != "" {
+		url = fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_VOLUME?condition={"constraint":[{"simple":{"name":"nativeId","value":"%s","operator":"equal"}}]}`, params.Domain, params.NativeId)
+	}
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -60,6 +66,9 @@ func GetCloudVolume(params model.GetInstanceRequest) models.Result[any] {
 
 func GetCloudEip(params model.GetInstanceRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_EIP?pageNo=%d&pageSize=%d`, params.Domain, params.PageNo, params.PageSize)
+	if params.NativeId != "" {
+		url = fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_EIP?condition={"constraint":[{"simple":{"name":"nativeId","value":"%s","operator":"equal"}}]}`, params.Domain, params.NativeId)
+	}
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -74,6 +83,9 @@ func GetCloudEip(params model.GetInstanceRequest) models.Result[any] {
 
 func GetCloudNic(params model.GetInstanceRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_VM_NIC?pageNo=%d&pageSize=%d`, params.Domain, params.PageNo, params.PageSize)
+	if params.NativeId != "" {
+		url = fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_VM_NIC?condition={"constraint":[{"simple":{"name":"nativeId","value":"%s","operator":"equal"}}]}`, params.Domain, params.NativeId)
+	}
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())
@@ -88,6 +100,9 @@ func GetCloudNic(params model.GetInstanceRequest) models.Result[any] {
 
 func GetCloudBandwidth(params model.GetInstanceRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_BANDWIDTHS?pageNo=%d&pageSize=%d`, params.Domain, params.PageNo, params.PageSize)
+	if params.NativeId != "" {
+		url = fmt.Sprintf(`%s/rest/tenant-resource/v1/instances/CLOUD_BANDWIDTHS?condition={"constraint":[{"simple":{"name":"nativeId","value":"%s","operator":"equal"}}]}`, params.Domain, params.NativeId)
+	}
 	dataStr, err := request.Get(url, params.Token, nil)
 	if err != nil {
 		return models.Error(-1, err.Error())

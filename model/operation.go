@@ -193,6 +193,7 @@ type GetIndicatorRequest struct {
 type GetInstanceRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`
+	NativeId string `json:"nativeId"`
 	PageNo   int    `json:"pageNo"`
 	PageSize int    `json:"pageSize"`
 }
