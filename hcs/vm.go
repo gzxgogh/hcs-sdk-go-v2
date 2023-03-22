@@ -243,7 +243,7 @@ func BatchAttachVmNic(params model.BatchAttachNicRequest) models.Result[any] {
 
 func DetachVmNic(params model.DetachNicRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2/%s/servers/%s/os-interface/%s`, params.Domain, params.TenantId, params.ServerId, params.NicId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -267,7 +267,7 @@ func AttachVmVolume(params model.AttachVolumeRequest) models.Result[any] {
 
 func DetachVmVolume(params model.DetachVolumeRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2/%s/servers/%s/os-volume_attachments/%s`, params.Domain, params.TenantId, params.ServerId, params.VolumeId)
-	_, err := request.Delete(url, params.Token, nil)
+	_, err := request.DeleteWithoutBody(url, params.Token)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}
@@ -320,6 +320,26 @@ func ChangeVmImage(params model.ChangeVmImageRequest) models.Result[any] {
 		return models.Error(-1, res.Error.Message)
 	}
 	err = ExecJob(params.Domain, params.TenantId, params.Token, res.JobId)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
+func LockVm(params model.LockVmRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
+	_, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
+func UnlockVm(params model.UnlockVmRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2/%s/servers/%s/action`, params.Domain, params.TenantId, params.ServerId)
+	_, err := request.Post(url, params.Token, params.Params)
 	if err != nil {
 		return models.Error(-1, err.Error())
 	}

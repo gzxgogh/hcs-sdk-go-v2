@@ -282,6 +282,38 @@ func GetToken(username, password, projectName string) string {
 	return token
 }
 
+func GetOperationToken(domain, username, password string) (string, error) {
+	url := fmt.Sprintf("%s/rest/plat/smapp/v1/oauth/token", domain)
+	method := "PUT"
+
+	payload := fmt.Sprintf(`{"grantType": "password","userName": "%s","value": "%s"}`, username, password)
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr} //忽略https的请求
+	req, err := http.NewRequest(method, url, strings.NewReader(payload))
+	req.Header.Add("Content-Type", "application/json;charset=UTF-8")
+	if err != nil {
+		logs.Error("http请求错误:{}", err.Error())
+		return "", err
+	}
+	res, err := client.Do(req)
+	if err != nil {
+		logs.Error("http请求错误:{}", err.Error())
+		return "", err
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		logs.Error("解析错误:{}", err.Error())
+		return "", err
+	}
+	result := make(map[string]interface{})
+	utils.FromJSON(string(body), &result)
+
+	return fmt.Sprint(result["accessSession"]), nil
+}
+
 func IsList(params interface{}) bool {
 	switch params.(type) {
 	case []interface{}:

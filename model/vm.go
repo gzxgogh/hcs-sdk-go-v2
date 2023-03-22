@@ -449,6 +449,30 @@ type ChangeVmImage struct {
 	Metadata  map[string]string `json:"metadata,omitempty"`
 }
 
+type LockVmRequest struct {
+	Domain   string       `json:"domain"`
+	Token    string       `json:"token"`
+	TenantId string       `json:"tenantId"`
+	ServerId string       `json:"server_id"`
+	Params   LockVmParams `json:"params"`
+}
+
+type LockVmParams struct {
+	Lock map[string]string `json:"lock"`
+}
+
+type UnlockVmRequest struct {
+	Domain   string         `json:"domain"`
+	Token    string         `json:"token"`
+	TenantId string         `json:"tenantId"`
+	ServerId string         `json:"server_id"`
+	Params   UnlockVmParams `json:"params"`
+}
+
+type UnlockVmParams struct {
+	Unlock map[string]string `json:"unlock"`
+}
+
 type OnlineUpgradeVmRequest struct {
 	Domain   string                `json:"domain"`
 	Token    string                `json:"token"`
