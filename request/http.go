@@ -255,11 +255,11 @@ func PATCH(url, token string, params interface{}) (string, error) {
 	return resStr, nil
 }
 
-func GetToken(username, password, projectName string) string {
+func GetToken(tenantName, account, password, projectName string) string {
 	url := "https://iam-apigateway-proxy.hyy.com:5443/v3/auth/tokens"
 	method := "POST"
 
-	payload := fmt.Sprintf(`{"auth": {"identity": {"methods": ["password"],"password": {"user": {"domain": {"name": "%s"},"name": "%s","password": "%s"}}},"scope": {"project": {"name": "%s"}}}}`, username, username, password, projectName)
+	payload := fmt.Sprintf(`{"auth": {"identity": {"methods": ["password"],"password": {"user": {"domain": {"name": "%s"},"name": "%s","password": "%s"}}},"scope": {"project": {"name": "%s"}}}}`, tenantName, account, password, projectName)
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
