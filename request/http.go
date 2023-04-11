@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/gzxgogh/hcs-sdk-go-v2/model"
 	"github.com/maczh/mgin/logs"
 	"github.com/maczh/mgin/utils"
 	"io/ioutil"
@@ -103,6 +104,11 @@ func Post(url, token string, params interface{}) (string, error) {
 	resStr := string(body)
 	logs.Debug("http请求返回的数据:{}", resStr)
 	if res.StatusCode >= 300 {
+		var neutronError model.NeutronObjErr
+		utils.FromJSON(resStr, &neutronError)
+		if neutronError.NeutronError.Message != "" {
+			return "", errors.New(neutronError.NeutronError.Message)
+		}
 		return "", errors.New(resStr)
 	}
 
@@ -140,6 +146,11 @@ func Delete(url, token string, params interface{}) (string, error) {
 	resStr := string(body)
 	logs.Debug("http请求返回的数据:{}", resStr)
 	if res.StatusCode >= 300 {
+		var neutronError model.NeutronObjErr
+		utils.FromJSON(resStr, &neutronError)
+		if neutronError.NeutronError.Message != "" {
+			return "", errors.New(neutronError.NeutronError.Message)
+		}
 		return "", errors.New(resStr)
 	}
 
@@ -175,6 +186,11 @@ func DeleteWithoutBody(url, token string) (string, error) {
 	resStr := string(body)
 	logs.Debug("http请求返回的数据:{}", resStr)
 	if res.StatusCode >= 300 {
+		var neutronError model.NeutronObjErr
+		utils.FromJSON(resStr, &neutronError)
+		if neutronError.NeutronError.Message != "" {
+			return "", errors.New(neutronError.NeutronError.Message)
+		}
 		return "", errors.New(resStr)
 	}
 
@@ -212,6 +228,11 @@ func Put(url, token string, params interface{}) (string, error) {
 	resStr := string(body)
 	logs.Debug("http请求返回的数据:{}", resStr)
 	if res.StatusCode >= 300 {
+		var neutronError model.NeutronObjErr
+		utils.FromJSON(resStr, &neutronError)
+		if neutronError.NeutronError.Message != "" {
+			return "", errors.New(neutronError.NeutronError.Message)
+		}
 		return "", errors.New(resStr)
 	}
 

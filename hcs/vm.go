@@ -404,6 +404,16 @@ func QueryConsoleAddress(params model.QueryConsoleAddRequest) models.Result[any]
 	return models.Success[any](result)
 }
 
+func GetPassword(params model.UnlockVmRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v1/%s/cloudservers/%s/os-server-password`, params.Domain, params.TenantId, params.ServerId)
+	_, err := request.Get(url, params.Token, nil)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	return models.Success[any](nil)
+}
+
 // 使用此API，需预先安装重置密码插件
 func ChangeVmPwd(params model.ChangeVmPwdRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v1/%s/cloudservers/%s/os-reset-password`, params.Domain, params.TenantId, params.ServerId)

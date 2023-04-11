@@ -9,3 +9,7 @@ type NeutronError struct {
 	Message string `json:"message"`
 	Detail  string `json:"detail"`
 }
+
+type NeutronObjErr struct {
+	NeutronError NeutronError `json:"NeutronError"`
+}
