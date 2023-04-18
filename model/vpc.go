@@ -637,6 +637,7 @@ type QueryPortsRequest struct {
 	NetworkId      string `json:"network_id,omitempty"`
 	DeviceId       string `json:"device_id,omitempty"`       //端口所属设备id，如虚拟机 uuid。
 	SecurityGroups string `json:"security_groups,omitempty"` //安全组id
+	QosPolicyId    string `json:"qos_policy_id,omitempty"`
 }
 
 type QueryPortsResponse struct {
