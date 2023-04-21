@@ -308,6 +308,27 @@ type RebootType struct {
 	Type string `json:"type"` //普通重启（“SOFT”）和强制重启（“HARD”）
 }
 
+type ResetVmRequest struct {
+	Domain   string      `json:"domain"`
+	Token    string      `json:"token"`
+	TenantId string      `json:"tenantId"`
+	ServerId string      `json:"server_id"`
+	Params   ResetParams `json:"params"`
+}
+
+type ResetParams struct {
+	Reset Reset `json:"os-reinstall"`
+}
+
+type Reset struct {
+	AdminPass string `json:"adminPass,omitempty"`
+	KeyName   string `json:"keyName,omitempty"`
+	UserId    string `json:"userId,omitempty"`
+	Metadata  struct {
+		UserData string `json:"userData,omitempty"`
+	} `json:" metadataReinstallCloudinit,omitempty"`
+}
+
 type VmRequest struct {
 	Domain   string `json:"domain"`
 	Token    string `json:"token"`

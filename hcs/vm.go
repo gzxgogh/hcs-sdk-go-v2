@@ -189,6 +189,31 @@ func RebootVm(params model.RebootVmRequest) models.Result[any] {
 	return models.Success[any](nil)
 }
 
+func ResetVm(params model.ResetVmRequest) models.Result[any] {
+	url := fmt.Sprintf(`%s/v2/%s/cloudservers/%s/reinstallos`, params.Domain, params.TenantId, params.ServerId)
+	_, err := request.Post(url, params.Token, params.Params)
+	if err != nil {
+		return models.Error(-1, err.Error())
+	}
+
+	for i := 0; i < 60; i++ {
+		url = fmt.Sprintf(`%s/v2/%s/servers/%s`, params.Domain, params.TenantId, params.ServerId)
+		dataStr, err := request.Get(url, params.Token, nil)
+		if err != nil {
+			return models.Error(-1, err.Error())
+		}
+		res := make(map[string]interface{})
+		utils.FromJSON(dataStr, &res)
+		var vmInstance model.QueryVmResponse
+		utils.FromJSON(utils.ToJSON(res["server"]), &vmInstance)
+		if vmInstance.Status == "ACTIVE" {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+	return models.Success[any](nil)
+}
+
 func QueryVmNic(params model.VmRequest) models.Result[any] {
 	url := fmt.Sprintf(`%s/v2/%s/servers/%s/os-interface`, params.Domain, params.TenantId, params.ServerId)
 	dataStr, err := request.Get(url, params.Token, params)
