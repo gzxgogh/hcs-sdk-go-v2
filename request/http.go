@@ -276,10 +276,8 @@ func PATCH(url, token string, params interface{}) (string, error) {
 	return resStr, nil
 }
 
-func GetToken(tenantName, account, password, projectName string) string {
-	url := "https://iam-apigateway-proxy.hyy.com:5443/v3/auth/tokens"
+func GetToken(url, tenantName, account, password, projectName string) string {
 	method := "POST"
-
 	payload := fmt.Sprintf(`{"auth": {"identity": {"methods": ["password"],"password": {"user": {"domain": {"name": "%s"},"name": "%s","password": "%s"}}},"scope": {"project": {"name": "%s"}}}}`, tenantName, account, password, projectName)
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -303,8 +301,7 @@ func GetToken(tenantName, account, password, projectName string) string {
 	return token
 }
 
-func GetOperationToken(domain, username, password string) (string, error) {
-	url := fmt.Sprintf("%s/rest/plat/smapp/v1/oauth/token", domain)
+func GetOperationToken(url, username, password string) (string, error) {
 	method := "PUT"
 
 	payload := fmt.Sprintf(`{"grantType": "password","userName": "%s","value": "%s"}`, username, password)
